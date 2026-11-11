@@ -1,16 +1,22 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>html,body{margin:0}</style>
 <title>Bearing Yard</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap">
 <style>
-/* Layout: fixed pixel-art dusk harbour behind everything, film letterbox bars top and bottom, two columns of pixel panels (inputs left, viewer and results right). Single committed look. */
+/* Layout: fixed pixel harbour scene behind a HUD strip, a tab bar and one tab panel at a time. Single committed look: dusk violet, orange headings, teal toggles, and a fixed traffic-light scheme (green pass, amber warning, red fail) used the same way in every chart. */
 :root {
-  --bg: #0a0618; --ink: #f6ecff; --dim: #a898d8;
-  --panel: rgba(15, 9, 35, .84); --panel2: #261a58; --field: #0a0620; --bd: #04020b;
-  --org: #ff9a3d; --org2: #b24d10; --teal: #37e6c8; --pink: #ff4f8b; --yel: #ffd45e; --lime: #9cff5a; --bad: #ff5a6e;
-  --pxs: 0 -4px 0 0 var(--bd), 0 4px 0 0 var(--bd), -4px 0 0 0 var(--bd), 4px 0 0 0 var(--bd), inset 4px 4px 0 0 rgba(255,255,255,.08), inset -4px -4px 0 0 rgba(0,0,0,.35);
+  --bg: #0a0618; --ink: #f6ecff; --dim: #b4a6e2; --faint: #7f71b0;
+  --panel: rgba(15, 9, 35, .88); --panel2: #261a58; --field: #0a0620; --bd: #04020b; --line: #3b2d78;
+  --org: #ff9a3d; --org2: #b24d10; --teal: #37e6c8; --yel: #ffd45e;
+  --good: #9cff5a; --warn: #ffb02e; --bad: #ff5a6e; --idle: #3a2f70;
+  --pxs: 0 -4px 0 0 var(--bd), 0 4px 0 0 var(--bd), -4px 0 0 0 var(--bd), 4px 0 0 0 var(--bd), inset 4px 4px 0 0 rgba(255,255,255,.07), inset -4px -4px 0 0 rgba(0,0,0,.35);
   --f1: 'Press Start 2P', ui-monospace, 'Courier New', monospace;
   --f2: 'VT323', ui-monospace, 'Courier New', monospace;
   color-scheme: dark;
@@ -18,26 +24,16 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html { background: var(--bg); }
 body {
-  margin: 0; background-color: var(--bg); color: var(--ink);
-  font-family: var(--f2); font-size: 22px; line-height: 1.1;
-  padding-block: 56px 64px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  margin: 0; background-color: var(--bg); color: var(--ink); font-family: var(--f2); font-size: 22px; line-height: 1.15;
+  padding-block: 52px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
 #bg { position: fixed; left: 0; top: 0; z-index: 0; image-rendering: pixelated; image-rendering: crisp-edges; animation: fadein 1.4s ease-out; }
 @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
-.fx {
-  position: fixed; inset: 0; z-index: 4; pointer-events: none;
-  background:
-    repeating-linear-gradient(0deg, rgba(0,0,0,.13) 0 1px, transparent 1px 3px),
-    radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(4,2,12,.7) 100%);
-}
-.bar {
-  position: fixed; left: 0; right: 0; z-index: 5; background: #000; color: var(--dim);
-  font-family: var(--f1); font-size: 9px; display: flex; justify-content: space-between; align-items: center; gap: 12px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
-  white-space: nowrap; overflow: hidden;
-}
+.fx { position: fixed; inset: 0; z-index: 4; pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,.10) 0 1px, transparent 1px 3px), radial-gradient(ellipse at 50% 45%, transparent 58%, rgba(4,2,12,.65) 100%); }
+.bar { position: fixed; left: 0; right: 0; z-index: 6; background: #000; color: var(--dim); font-family: var(--f1); font-size: 9px; display: flex; justify-content: space-between; align-items: center; gap: 12px; white-space: nowrap; overflow: hidden;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .bar.top { top: 0; height: calc(28px + env(safe-area-inset-top, 0px)); padding-top: env(safe-area-inset-top, 0px); animation: dropin .9s ease-out; }
 .bar.bot { bottom: 0; height: calc(28px + env(safe-area-inset-bottom, 0px)); padding-bottom: env(safe-area-inset-bottom, 0px); animation: risein .9s ease-out; }
 @keyframes dropin { from { transform: translateY(-100%); } to { transform: none; } }
@@ -48,31 +44,25 @@ body {
 .bar .mid { color: var(--ink); overflow: hidden; text-overflow: ellipsis; }
 @media (max-width: 560px) { .bar .mid { display: none; } }
 
-.page { position: relative; z-index: 2; max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
-.hero { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.logo { width: 64px; height: 64px; image-rendering: pixelated; flex: none; }
-h1 { margin: 0; font-family: var(--f1); font-weight: 400; font-size: clamp(18px, 5vw, 32px); line-height: 1.4; color: var(--yel); text-shadow: 3px 3px 0 var(--org2), 6px 6px 0 var(--bd); margin-right: auto; }
-.grid { display: grid; grid-template-columns: minmax(290px, 390px) minmax(0, 1fr); gap: 22px; align-items: start; }
-.col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
-@media (max-width: 860px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.page { position: relative; z-index: 2; max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+.hero { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.logo { width: 56px; height: 56px; image-rendering: pixelated; flex: none; }
+.hero h1 { margin: 0; font-family: var(--f1); font-weight: 400; font-size: clamp(16px, 4.4vw, 26px); line-height: 1.4; color: var(--yel); text-shadow: 3px 3px 0 var(--org2), 6px 6px 0 var(--bd); }
+.hero p { margin: 4px 0 0; color: var(--dim); font-size: 20px; }
+.hero .grow { margin-right: auto; min-width: 0; }
 
-.box { background: var(--panel); box-shadow: var(--pxs); margin: 4px; padding: 14px 14px 16px; min-width: 0; }
-.bt { font-family: var(--f1); font-size: 10px; font-weight: 400; color: var(--org); margin: 0 0 12px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-.bt i { font-style: normal; color: var(--teal); margin-right: 8px; }
-.lab { display: block; font-family: var(--f1); font-size: 8px; color: var(--dim); margin: 0 0 4px 4px; line-height: 1.4; }
-.b {
-  font-family: var(--f1); font-size: 10px; color: var(--ink); background: var(--panel2); border: 0; border-radius: 0;
-  padding: 10px 10px; cursor: pointer; box-shadow: var(--pxs); margin: 4px; text-transform: uppercase;
-}
+.box { background: var(--panel); box-shadow: var(--pxs); margin: 4px; padding: 16px; min-width: 0; }
+.bt { font-family: var(--f1); font-size: 10px; font-weight: 400; color: var(--org); margin: 0 0 14px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; line-height: 1.5; }
+.sub { color: var(--dim); margin: -6px 0 12px; font-size: 20px; max-width: 70ch; }
+.lab { display: block; font-size: 19px; color: var(--dim); margin: 0 0 2px 4px; letter-spacing: .02em; }
+.lab b { font-weight: 400; color: var(--ink); }
+.b { font-family: var(--f1); font-size: 10px; color: var(--ink); background: var(--panel2); border: 0; border-radius: 0; padding: 10px 12px; cursor: pointer; box-shadow: var(--pxs); margin: 4px; text-transform: uppercase; line-height: 1.3; }
 .b:hover { background: #38298a; }
 .b:active { transform: translateY(4px); }
 .b[aria-pressed=true] { background: var(--teal); color: #04201c; }
-.b.sm { font-size: 8px; padding: 8px 8px; }
+.b.sm { font-size: 8px; padding: 8px 9px; }
 .row2 { display: flex; flex-wrap: wrap; align-items: center; }
-input[type=number], select, textarea {
-  font-family: var(--f2); font-size: 24px; color: var(--ink); background: var(--field); border: 0; border-radius: 0;
-  box-shadow: var(--pxs); padding: 6px 8px; width: calc(100% - 8px); margin: 4px; min-width: 0; -moz-appearance: textfield;
-}
+input[type=number], input[type=text], select, textarea { font-family: var(--f2); font-size: 24px; color: var(--ink); background: var(--field); border: 0; border-radius: 0; box-shadow: var(--pxs); padding: 6px 8px; width: calc(100% - 8px); margin: 4px; min-width: 0; -moz-appearance: textfield; }
 input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 select { appearance: none; -webkit-appearance: none; padding-right: 30px; }
 .sel { position: relative; }
@@ -82,149 +72,271 @@ textarea { font-size: 18px; line-height: 1.2; resize: vertical; }
 .st { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; }
 .st .b { padding: 8px 0; width: 32px; text-align: center; }
 .st input { margin: 4px 0; text-align: center; width: 100%; padding: 6px 2px; font-size: 22px; }
-.f2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; }
-.f2 > div, .f1 > div { min-width: 0; }
-.unit { color: var(--dim); font-size: 18px; margin-left: 4px; }
+.fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+.fgrid > div { min-width: 0; }
+.note { color: var(--faint); font-size: 18px; margin: 4px 4px 0; }
 
-.types { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.tp { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 8px; padding: 10px 4px 8px; line-height: 1.5; }
-.tp canvas { width: 96px; max-width: 100%; aspect-ratio: 4 / 3; image-rendering: pixelated; background: #0a0620; }
-.tp span { font-family: var(--f2); font-size: 20px; color: var(--dim); text-transform: none; }
-.tp[aria-pressed=true] span { color: #04201c; }
+/* HUD */
+.hud { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 14px; position: sticky; top: calc(34px + env(safe-area-inset-top, 0px)); z-index: 3; padding: 10px 16px; background: rgba(12, 7, 30, .94); }
+.hud canvas { width: 56px; height: 56px; image-rendering: pixelated; background: #0a0620; }
+.hud-name { font-family: var(--f1); font-size: 12px; color: var(--yel); margin: 0 0 6px; line-height: 1.4; overflow-wrap: anywhere; }
+.hud-sub { margin: 0; color: var(--dim); font-size: 20px; overflow-wrap: anywhere; }
+.hud-nums { display: flex; gap: 16px; }
+.hud-nums div { text-align: right; }
+.hud-nums small { display: block; color: var(--faint); font-size: 17px; }
+.hud-nums span { font-size: 26px; font-variant-numeric: tabular-nums; }
+.stamp { font-family: var(--f1); font-size: 11px; padding: 10px 12px; color: #0b0418; background: var(--good); box-shadow: var(--pxs); margin: 4px; }
+.stamp.idle { background: var(--idle); color: var(--dim); }
+.stamp.warn { background: var(--warn); } .stamp.bad { background: var(--bad); }
+@media (max-width: 700px) { .hud { grid-template-columns: auto minmax(0, 1fr) auto; position: static; } .hud-nums { display: none; } }
 
-.view { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 14px; }
-@media (max-width: 520px) { .view { grid-template-columns: minmax(0, 1fr); } }
-.view canvas { width: 100%; display: block; image-rendering: pixelated; image-rendering: crisp-edges; background: #0a0620; box-shadow: var(--pxs); margin: 4px; max-width: calc(100% - 8px); }
-.view .front { aspect-ratio: 1; }
-.view .sect { aspect-ratio: 4 / 3; }
-.cap { font-family: var(--f1); font-size: 8px; color: var(--dim); margin: 8px 4px 0; }
-.name { font-family: var(--f1); font-size: 13px; line-height: 1.5; color: var(--yel); margin: 0 0 4px 4px; overflow-wrap: anywhere; }
-.specs { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 4px 18px; margin: 14px 4px 0; }
-.specs div { display: flex; justify-content: space-between; gap: 8px; border-bottom: 2px dotted #3b2d78; min-width: 0; }
-.specs dt { color: var(--dim); white-space: nowrap; }
-.specs dd { white-space: nowrap; }
-.specs dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
-.verdict { margin: 14px 4px 0; padding: 10px 12px; box-shadow: var(--pxs); background: var(--field); font-size: 24px; }
-.verdict.ok { color: var(--lime); } .verdict.no { color: var(--bad); }
-.warns { margin: 8px 4px 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.warns span { font-family: var(--f1); font-size: 8px; background: var(--org); color: #2a1100; padding: 6px 7px; }
-.chart { width: calc(100% - 8px); aspect-ratio: 120 / 56; display: block; image-rendering: pixelated; image-rendering: crisp-edges; background: #0a0620; box-shadow: var(--pxs); margin: 4px; }
-.axis { display: flex; justify-content: space-between; color: var(--dim); font-size: 18px; margin: 4px 4px 0; }
+/* tabs */
+.tabs { display: flex; gap: 6px; overflow-x: auto; padding: 6px 6px 10px; margin: 0 -6px; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs .b { flex: none; padding: 12px 14px; }
+.tabs .b[aria-selected=true] { background: var(--org); color: #2a1100; }
+.tabs .b i { font-style: normal; opacity: .75; margin-right: 6px; }
+.tab[hidden] { display: none; }
+.tab { display: flex; flex-direction: column; gap: 18px; }
+.cols3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; align-items: start; }
+.cols2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 18px; align-items: start; }
 
-#list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-.item {
-  width: calc(100% - 8px); text-align: left; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; align-items: center;
-  font-family: var(--f2); font-size: 21px; text-transform: none; padding: 10px 12px; margin: 4px; color: var(--ink);
-}
-.item[aria-pressed=true] { background: #3a2a8c; color: var(--ink); outline: 4px solid var(--teal); outline-offset: 0; }
-.item .nm { font-family: var(--f1); font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; }
-.item .meta { grid-column: 1 / -1; color: var(--dim); }
-.item .nums { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0 16px; font-variant-numeric: tabular-nums; }
-.tag { font-family: var(--f1); font-size: 8px; padding: 5px 6px; color: #1a0a00; background: var(--lime); white-space: nowrap; }
-.tag.f { background: var(--bad); }
-.tag.e { background: var(--dim); color: #120a28; }
-.tag.r { background: var(--teal); color: #04201c; }
-.blocks { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(20, 1fr); gap: 2px; height: 10px; }
-.blocks i { background: #2a1d5e; display: block; }
-.blocks i.on { background: var(--lime); }
-.blocks.bad i.on { background: var(--bad); }
-.blocks i:nth-child(10) { border-right: 3px solid var(--teal); }
-.empty { color: var(--bad); margin: 8px 4px; font-size: 24px; }
-.hint { color: var(--dim); font-size: 19px; margin: 6px 4px 0; }
+/* type cards */
+.types { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.tp { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 9px; padding: 12px 6px 10px; line-height: 1.5; background: #1a1240; }
+.tp canvas { width: 100px; max-width: 100%; aspect-ratio: 4 / 3; image-rendering: pixelated; background: #0a0620; }
+.tp span { font-family: var(--f2); font-size: 19px; color: var(--faint); text-transform: none; }
+.tp[aria-pressed=true] { background: #11403f; color: var(--teal); outline: 3px solid var(--teal); outline-offset: -3px; }
+.tp[aria-pressed=true] span { color: var(--dim); }
+.chips { display: flex; flex-wrap: wrap; }
+.sers { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; margin-top: 4px; }
+.sers .lab { margin: 0 6px 0 4px; }
+
+/* viewer */
+.view { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 16px; }
+@media (max-width: 560px) { .view { grid-template-columns: minmax(0, 1fr); } }
+.view canvas { width: calc(100% - 8px); display: block; image-rendering: pixelated; image-rendering: crisp-edges; background: #0a0620; box-shadow: var(--pxs); margin: 4px; }
+.view .front { aspect-ratio: 1; } .view .sect { aspect-ratio: 4 / 3; }
+.cap { font-size: 18px; color: var(--faint); margin: 6px 4px 0; }
+.name { font-family: var(--f1); font-size: 14px; line-height: 1.5; color: var(--yel); margin: 0 0 4px 4px; overflow-wrap: anywhere; }
+.tbl-wrap { overflow-x: auto; margin: 4px; }
+table { border-collapse: collapse; width: 100%; font-size: 21px; font-variant-numeric: tabular-nums; }
+th { font-family: var(--f1); font-weight: 400; font-size: 8px; color: var(--org); text-align: left; padding: 8px 10px; border-bottom: 3px solid var(--line); white-space: nowrap; line-height: 1.5; }
+td { padding: 5px 10px; border-bottom: 2px dotted var(--line); white-space: nowrap; }
+td.sym { color: var(--yel); } td.q { color: var(--dim); white-space: normal; } td.u { color: var(--faint); }
+td.num, th.num { text-align: right; }
+tr.grp td { font-family: var(--f1); font-size: 8px; color: var(--teal); padding-top: 14px; border-bottom: 3px solid var(--line); }
+.verdict { margin: 14px 4px 0; padding: 12px 14px; box-shadow: var(--pxs); background: var(--field); font-size: 24px; }
+.verdict.ok { color: var(--good); } .verdict.no { color: var(--bad); }
+.warns { margin: 10px 4px 0; display: flex; flex-direction: column; gap: 6px; }
+.warns p { margin: 0; font-size: 20px; color: var(--ink); display: flex; gap: 10px; align-items: baseline; }
+.warns p b { font-family: var(--f1); font-weight: 400; font-size: 8px; background: var(--warn); color: #2a1100; padding: 5px 6px; flex: none; }
+
+/* candidates table */
+.res { width: 100%; }
+.res tr.row { cursor: pointer; }
+.res tr.row:hover td { background: rgba(255,255,255,.05); }
+.res tr.row[aria-selected=true] td { background: rgba(55, 230, 200, .14); }
+.res tr.row[aria-selected=true] td:first-child { box-shadow: inset 4px 0 0 var(--teal); }
+.res .nm { font-family: var(--f1); font-size: 10px; color: var(--ink); white-space: nowrap; }
+.pill { font-family: var(--f1); font-size: 8px; padding: 5px 6px; color: #0b0418; background: var(--good); white-space: nowrap; display: inline-block; }
+.pill.warn { background: var(--warn); } .pill.bad { background: var(--bad); } .pill.idle { background: var(--idle); color: var(--dim); }
+.pill.ref { background: var(--teal); } .pill.est { background: var(--idle); color: var(--dim); }
+.mini { display: inline-grid; grid-template-columns: repeat(10, 5px); gap: 1px; height: 8px; vertical-align: middle; margin-right: 8px; }
+.mini i { background: var(--idle); display: block; } .mini i.g { background: var(--good); } .mini i.w { background: var(--warn); } .mini i.r { background: var(--bad); }
+.empty { color: var(--bad); margin: 10px 4px; font-size: 22px; }
+.bars { display: flex; flex-direction: column; gap: 8px; margin: 4px; }
+.hb { display: grid; grid-template-columns: 110px minmax(0, 1fr) 70px; gap: 10px; align-items: center; font-size: 20px; }
+.hb .lbl { font-family: var(--f1); font-size: 9px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hb .val { text-align: right; font-variant-numeric: tabular-nums; }
+.track { position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; height: 14px; }
+.track i { display: block; background: var(--idle); }
+.track i.g { background: var(--good); } .track i.w { background: var(--warn); } .track i.r { background: var(--bad); } .track i.x { background: #6b6290; }
+.track .tick { position: absolute; top: -4px; bottom: -4px; width: 3px; background: var(--teal); }
+.gauge { margin: 4px 4px 18px; }
+.gauge .gh { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.gauge .gh b { font-family: var(--f1); font-weight: 400; font-size: 9px; color: var(--ink); }
+.gauge .gv { font-size: 24px; font-variant-numeric: tabular-nums; }
+.gauge .track { height: 18px; margin: 8px 0 6px; }
+.gauge .scale { display: flex; justify-content: space-between; color: var(--faint); font-size: 17px; }
+.gauge .why { color: var(--dim); font-size: 19px; margin: 2px 0 0; }
+.legend { display: flex; flex-direction: column; gap: 8px; margin: 10px 4px 0; }
+.legend p { margin: 0; display: flex; gap: 10px; align-items: baseline; font-size: 20px; color: var(--ink); }
+.sw { display: inline-block; width: 18px; height: 12px; flex: none; transform: translateY(1px); }
+.sw.g { background: var(--good); } .sw.w { background: var(--warn); } .sw.r { background: var(--bad); } .sw.t { background: repeating-linear-gradient(90deg, var(--teal) 0 4px, transparent 4px 8px); height: 4px; transform: translateY(-2px); }
+.sw.c { background: #fff; width: 3px; height: 16px; margin: 0 7px; transform: none; }
+.sw.y { background: var(--yel); } .sw.i { background: var(--idle); } .sw.d { background: repeating-linear-gradient(90deg, var(--line) 0 2px, transparent 2px 6px); height: 3px; transform: translateY(-2px); }
+.chart { width: calc(100% - 8px); aspect-ratio: 220 / 120; display: block; image-rendering: pixelated; image-rendering: crisp-edges; background: #0a0620; box-shadow: var(--pxs); margin: 4px; }
+.axl { display: flex; justify-content: space-between; color: var(--faint); font-size: 18px; margin: 6px 4px 0; }
+
+.calc { margin: 4px; display: flex; flex-direction: column; gap: 4px; font-size: 21px; }
+.calc p { margin: 0; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 8px; }
+.calc p span:first-child { font-family: var(--f1); font-size: 8px; color: var(--teal); padding-top: 6px; }
+.calc code { font-family: var(--f2); color: var(--ink); overflow-wrap: anywhere; }
+.calc em { font-style: normal; color: var(--yel); }
+.eq { margin: 0 0 14px 4px; }
+.eq h3 { font-family: var(--f1); font-size: 9px; font-weight: 400; color: var(--teal); margin: 0 0 6px; line-height: 1.5; }
+.eq p { margin: 0 0 2px; font-size: 21px; overflow-wrap: anywhere; } .eq p.d { color: var(--dim); font-size: 19px; }
+.fine { color: var(--dim); font-size: 19px; margin: 0 4px; max-width: 90ch; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: end; }
+.toolbar > div { flex: 1 1 180px; min-width: 0; }
 details.box > summary { font-family: var(--f1); font-size: 10px; color: var(--org); cursor: pointer; }
-.fine { color: var(--dim); font-size: 19px; margin: 0 4px; max-width: 80ch; }
 @media (prefers-reduced-motion: reduce) { #bg, .bar.top, .bar.bot, .rec::before { animation: none; } }
 </style>
 
 <canvas id="bg" aria-hidden="true"></canvas>
 <div class="fx" aria-hidden="true"></div>
-<div class="bar top"><span class="rec">REC</span><span class="mid">BEARING YARD &middot; SKF / FAG</span><span id="tc">00:00:00</span></div>
-<div class="bar bot"><span id="status">-</span><span>DUSK YARD</span></div>
+<div class="bar top"><span class="rec">REC</span><span class="mid">BEARING YARD &middot; BALL BEARING SELECTION &middot; SKF / FAG</span><span id="tc">00:00:00</span></div>
+<div class="bar bot"><span id="status">-</span><span id="stage">SPECIFY</span></div>
 
 <main class="page">
   <header class="hero">
     <canvas id="logo" class="logo" width="64" height="64" aria-hidden="true"></canvas>
-    <h1>BEARING<br>YARD</h1>
-    <div class="row2" id="maker" role="group" aria-label="Maker">
+    <div class="grow"><h1>BEARING YARD</h1><p>Ball bearing selection to ISO 281</p></div>
+    <div class="row2" id="maker" role="group" aria-label="Manufacturer">
       <button type="button" class="b" data-m="SKF" aria-pressed="true">SKF</button>
       <button type="button" class="b" data-m="FAG" aria-pressed="false">FAG</button>
       <button type="button" class="b" data-m="BOTH" aria-pressed="false">BOTH</button>
     </div>
   </header>
 
-  <div class="grid">
-    <div class="col" id="controls">
-      <section class="box" aria-labelledby="h1a">
-        <h2 class="bt" id="h1a"><span><i>01</i>TYPE</span></h2>
-        <div class="types" id="types"></div>
-        <h2 class="bt" style="margin-top:14px"><span><i>02</i>SERIES</span></h2>
-        <div class="row2" id="series"></div>
-      </section>
+  <section class="box hud" aria-label="Current selection" aria-live="polite">
+    <canvas id="hud-c" width="64" height="64" aria-hidden="true"></canvas>
+    <div><p class="hud-name" id="hud-name">-</p><p class="hud-sub" id="hud-sub"></p></div>
+    <div class="hud-nums"><div><small>L10h adj.</small><span id="hn-life">-</span></div><div><small>Target</small><span id="hn-tgt">-</span></div><div><small>s0</small><span id="hn-s0">-</span></div></div>
+    <div class="stamp" id="hud-stamp">-</div>
+  </section>
 
-      <section class="box" aria-labelledby="h2a">
-        <h2 class="bt" id="h2a"><span><i>03</i>LOAD</span></h2>
-        <div class="f2" id="f-load"></div>
-      </section>
+  <nav class="tabs" role="tablist" aria-label="Sections" id="tabs">
+    <button type="button" class="b" role="tab" data-tab="specify" aria-selected="true"><i>1</i>SPECIFY</button>
+    <button type="button" class="b" role="tab" data-tab="candidates" aria-selected="false"><i>2</i>CANDIDATES</button>
+    <button type="button" class="b" role="tab" data-tab="bearing" aria-selected="false"><i>3</i>BEARING</button>
+    <button type="button" class="b" role="tab" data-tab="charts" aria-selected="false"><i>4</i>CHARTS</button>
+    <button type="button" class="b" role="tab" data-tab="method" aria-selected="false"><i>5</i>METHOD</button>
+    <button type="button" class="b" role="tab" data-tab="catalogue" aria-selected="false"><i>6</i>CATALOGUE</button>
+  </nav>
 
-      <section class="box" aria-labelledby="h3a">
-        <h2 class="bt" id="h3a"><span><i>04</i>LIFE</span></h2>
-        <div class="f2" id="f-life"></div>
-        <span class="lab" style="margin-top:8px">TYPICAL</span>
-        <div class="row2" id="presets"></div>
-      </section>
-
-      <section class="box" aria-labelledby="h4a">
-        <h2 class="bt" id="h4a"><span><i>05</i>FIT</span></h2>
-        <div class="f2" id="f-fit"></div>
-        <div class="row2" style="margin-top:6px"><button type="button" class="b sm" id="allb" aria-pressed="false">ALL BORES</button></div>
-      </section>
+  <!-- 1 SPECIFY -->
+  <section class="tab" id="tab-specify" role="tabpanel">
+    <section class="box" aria-labelledby="s-t">
+      <h2 class="bt" id="s-t">BEARING FAMILY</h2>
+      <div class="types" id="types"></div>
+      <div class="sers"><span class="lab">Series</span><div class="chips" id="series"></div></div>
+    </section>
+    <div class="cols3" id="controls">
+      <section class="box" aria-labelledby="s-l"><h2 class="bt" id="s-l">LOAD CASE</h2><div class="fgrid" id="f-load"></div><p class="note">Loads are constant and steady. Speed is shaft speed.</p></section>
+      <section class="box" aria-labelledby="s-f"><h2 class="bt" id="s-f">LIFE REQUIREMENT</h2><div class="fgrid" id="f-life"></div><span class="lab" style="margin-top:10px">Typical duty</span><div class="row2" id="presets"></div></section>
+      <section class="box" aria-labelledby="s-c"><h2 class="bt" id="s-c">FIT AND CONSTRAINTS</h2><div class="fgrid" id="f-fit"></div><div class="row2" style="margin-top:8px"><button type="button" class="b sm" id="allb" aria-pressed="false">SEARCH ALL BORES</button></div></section>
     </div>
+  </section>
 
-    <div class="col">
-      <section class="box" aria-labelledby="h5a">
-        <h2 class="bt" id="h5a"><span><i>06</i>SELECTED</span><button type="button" class="b sm" id="copy">COPY</button></h2>
-        <p class="name" id="v-name">-</p>
-        <p class="cap" id="v-sub" style="margin-top:0"></p>
+  <!-- 2 CANDIDATES -->
+  <section class="tab" id="tab-candidates" role="tabpanel" hidden>
+    <section class="box" aria-labelledby="c-t">
+      <h2 class="bt" id="c-t"><span>CANDIDATES <span id="count" style="color:var(--dim)"></span></span>
+        <span class="sel" style="min-width:190px"><select id="sort" aria-label="Sort order">
+          <option value="best">SORT: BEST FIT</option><option value="life">SORT: LONGEST LIFE</option><option value="small">SORT: SMALLEST OD</option><option value="light">SORT: LIGHTEST</option><option value="stat">SORT: MOST STATIC</option>
+        </select></span></h2>
+      <p class="sub" id="c-sub"></p>
+      <div class="tbl-wrap"><table class="res" id="res"><thead><tr><th>Designation</th><th>Size d x D x B</th><th class="num">C kN</th><th class="num">Lnm</th><th>Life margin</th><th class="num">s0</th><th>Status</th><th>Data</th></tr></thead><tbody id="list"></tbody></table></div>
+      <p class="empty" id="empty" hidden></p>
+      <div class="row2"><button type="button" class="b sm" id="more" hidden>MORE</button></div>
+      <div class="legend">
+        <p><span class="pill">PASS</span> Life and static safety both meet the requirement.</p>
+        <p><span class="pill warn">STATIC</span> Life is enough but static safety s0 is below the minimum.</p>
+        <p><span class="pill bad">SHORT</span> Rated life is below the required life.</p>
+        <p><span class="pill idle">N/A</span> This type cannot carry the load case (for example radial load on a thrust bearing).</p>
+        <p><span class="pill ref">REF</span> Rating follows catalogue values. <span class="pill est">EST</span> Rating is estimated, verify it.</p>
+      </div>
+    </section>
+  </section>
+
+  <!-- 3 BEARING -->
+  <section class="tab" id="tab-bearing" role="tabpanel" hidden>
+    <div class="cols2">
+      <section class="box" aria-labelledby="b-t">
+        <h2 class="bt" id="b-t"><span>SELECTED BEARING</span><button type="button" class="b sm" id="copy">COPY SUMMARY</button></h2>
+        <p class="name" id="v-name">-</p><p class="cap" id="v-sub" style="margin-top:0"></p>
         <div class="view">
-          <div><canvas id="front" class="front" width="64" height="64" aria-label="Selected bearing, front view"></canvas><p class="cap">FRONT</p></div>
-          <div><canvas id="sect" class="sect" width="96" height="72" aria-label="Selected bearing, half section"></canvas><p class="cap">SECTION</p></div>
+          <div><canvas id="front" class="front" width="64" height="64" aria-label="Front view"></canvas><p class="cap">Front view. Green tick marks the inner ring.</p></div>
+          <div><canvas id="sect" class="sect" width="96" height="72" aria-label="Half section"></canvas><p class="cap" id="sect-cap">Half section.</p></div>
         </div>
-        <dl class="specs" id="specs"></dl>
         <p class="verdict" id="verdict"></p>
         <div class="warns" id="warns"></div>
         <textarea id="out" rows="3" readonly hidden aria-label="Summary"></textarea>
       </section>
-
-      <section class="box" aria-labelledby="h6a">
-        <h2 class="bt" id="h6a"><span><i>07</i>LIFE VS LOAD</span></h2>
-        <canvas id="chart" class="chart" width="120" height="56" aria-label="Life against load"></canvas>
-        <div class="axis"><span>x0.25</span><span>LOAD</span><span>x3</span></div>
-        <div class="axis"><span id="ax-lo">100 h</span><span id="ax-t"></span><span id="ax-hi">10M h</span></div>
-      </section>
-
-      <section class="box" aria-labelledby="h7a">
-        <h2 class="bt" id="h7a"><span><i>08</i>CANDIDATES <span id="count" style="color:var(--dim)"></span></span>
-          <span class="sel" style="min-width:150px"><select id="sort" aria-label="Sort">
-            <option value="best">BEST FIT</option><option value="life">LONGEST LIFE</option><option value="small">SMALLEST OD</option><option value="light">LIGHTEST</option><option value="stat">MOST STATIC</option>
-          </select></span>
-        </h2>
-        <ul id="list"></ul>
-        <p class="empty" id="empty" hidden></p>
-        <div class="row2"><button type="button" class="b sm" id="more" hidden>MORE</button></div>
-      </section>
-
-      <details class="box">
-        <summary>DATA</summary>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
-          <p class="fine">Rows: type, series, code, d, D, B, C, C0. Type is dg, ac, sa or th. Sizes in mm, loads in kN.</p>
-          <textarea id="csv" rows="5" spellcheck="false" aria-label="Rows"></textarea>
-          <div class="row2"><button type="button" class="b sm" id="apply">ADD ROWS</button><button type="button" class="b sm" id="reset">RESET</button><span class="unit" id="csv-msg"></span></div>
-        </div>
-      </details>
-
-      <p class="fine">REF rows follow catalogue values. EST rows are estimated from geometry or scaled from a related series. SKF and FAG share ISO sizes. Confirm ratings, limiting speed and lubrication in the current catalogue before ordering.</p>
+      <section class="box" aria-labelledby="b-d"><h2 class="bt" id="b-d">DATA SHEET</h2><div class="tbl-wrap"><table id="specs"></table></div></section>
     </div>
-  </div>
+  </section>
+
+  <!-- 4 CHARTS -->
+  <section class="tab" id="tab-charts" role="tabpanel" hidden>
+    <div class="cols2">
+      <section class="box" aria-labelledby="g-t">
+        <h2 class="bt" id="g-t">LIFE AGAINST LOAD</h2>
+        <p class="sub">Adjusted rating life of the selected bearing when the whole load case is scaled from 0.25x to 3x.</p>
+        <canvas id="chart" class="chart" width="220" height="120" aria-label="Life against load chart"></canvas>
+        <div class="axl"><span>Horizontal: load, 0.25x to 3x of your case</span><span>Vertical: life, log scale</span></div>
+        <p class="fine" id="chart-note" style="margin-top:8px"></p>
+        <div class="legend">
+          <p><span class="sw g"></span>Curve in green: life is at or above the required life.</p>
+          <p><span class="sw r"></span>Curve in red: life is below the required life.</p>
+          <p><span class="sw t"></span>Dashed teal line: required life L10h you entered.</p>
+          <p><span class="sw y"></span>Yellow square: your entered load (1.0x).</p>
+          <p><span class="sw c"></span>White dotted line: the highest load that still gives the required life.</p>
+          <p><span class="sw d"></span>Dotted grid: one line per decade of life. Faint green and red tint: above and below the required life.</p>
+        </div>
+        <p class="fine" style="margin-top:10px">Life falls with the cube of load, so a 2x load cuts life to one eighth.</p>
+      </section>
+      <section class="box" aria-labelledby="g-m">
+        <h2 class="bt" id="g-m">CANDIDATE MARGIN</h2>
+        <p class="sub">Adjusted life divided by required life for the best candidates in the current sort order.</p>
+        <div class="bars" id="bars"></div>
+        <div class="legend">
+          <p><span class="sw g"></span>Green: passes. <span class="sw w"></span>Amber: life ok, static low. <span class="sw r"></span>Red: life short.</p>
+          <p><span class="sw t"></span>Teal tick: 1.0x, the required life. Each bar spans 0 to 3x.</p>
+        </div>
+      </section>
+    </div>
+    <section class="box" aria-labelledby="g-g">
+      <h2 class="bt" id="g-g">SAFETY GAUGES FOR THE SELECTED BEARING</h2>
+      <p class="sub">Each gauge fills to the current value. Block colour shows the zone it falls in.</p>
+      <div class="cols2" id="gauges"></div>
+    </section>
+  </section>
+
+  <!-- 5 METHOD -->
+  <section class="tab" id="tab-method" role="tabpanel" hidden>
+    <div class="cols2">
+      <section class="box" aria-labelledby="m-w"><h2 class="bt" id="m-w">WORKED CALCULATION</h2><p class="sub" id="m-sub"></p><div class="calc" id="calc"></div></section>
+      <section class="box" aria-labelledby="m-e"><h2 class="bt" id="m-e">EQUATIONS</h2><div id="eqs"></div></section>
+    </div>
+    <div class="cols2">
+      <section class="box" aria-labelledby="m-f"><h2 class="bt" id="m-f">FACTORS USED</h2><div id="facts"></div></section>
+      <section class="box" aria-labelledby="m-n"><h2 class="bt" id="m-n">DATA QUALITY AND LIMITS</h2><div id="notes"></div></section>
+    </div>
+  </section>
+
+  <!-- 6 CATALOGUE -->
+  <section class="tab" id="tab-catalogue" role="tabpanel" hidden>
+    <section class="box" aria-labelledby="k-t">
+      <h2 class="bt" id="k-t"><span>CATALOGUE TABLE <span id="k-count" style="color:var(--dim)"></span></span></h2>
+      <div class="toolbar">
+        <div><label class="lab" for="k-type">Family</label><div class="sel"><select id="k-type"></select></div></div>
+        <div><label class="lab" for="k-find">Find designation</label><input id="k-find" type="text" placeholder="6208" autocomplete="off"></div>
+      </div>
+      <div class="tbl-wrap"><table id="ktable"></table></div>
+      <div class="row2"><button type="button" class="b sm" id="k-more" hidden>MORE</button></div>
+    </section>
+    <details class="box">
+      <summary>ADD OR OVERRIDE CATALOGUE ROWS</summary>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px">
+        <p class="fine">One bearing per line: family, series, code, d, D, B, C, C0. Family is dg, ac, sa or th. Sizes in mm, ratings in kN.</p>
+        <textarea id="csv" rows="5" spellcheck="false" aria-label="Rows"></textarea>
+        <div class="row2"><button type="button" class="b sm" id="apply">ADD ROWS</button><button type="button" class="b sm" id="reset">RESET TABLE</button><span class="fine" id="csv-msg"></span></div>
+      </div>
+    </details>
+  </section>
 </main>
 <script>
 (function () {
@@ -360,23 +472,39 @@ function serMeta(id) { return SERIES.filter(function (s) { return s.id === id; }
 
 function evaluate(r, inp) {
   var C = r.C * inp.ft, C0 = r.C0 * inp.ft, Fr = inp.fr, Fa = inp.fa, P, P0, bad = '', pair = r.type === 'ac' && inp.pair;
+  var I = { ft: inp.ft, pair: pair, Ccat: r.C, C0cat: r.C0, p: 3 }, f2 = function (x) { return fmt(x, 2); };
+  I.ratio = Fr > 0 ? Fa / Fr : Infinity;
+  var rs = isFinite(I.ratio) ? f2(I.ratio) : 'inf';
   if (r.type === 'dg') {
-    var ey = interpEY(Fa / C0), rad = Fr > 0 && Fa / Fr <= ey.e;
-    P = rad ? Fr : 0.56 * Fr + ey.Y * Fa; P0 = Math.max(Fr, 0.6 * Fr + 0.5 * Fa);
+    var ey = interpEY(Fa / C0), rad = Fr > 0 && I.ratio <= ey.e;
+    I.f0 = Fa / C0; I.e = ey.e;
+    if (rad) { P = Fr; I.X = 1; I.Y = 0; I.cond = 'Fa/Fr = ' + rs + ' <= e = ' + f2(ey.e); I.eqP = 'P = Fr'; I.eqPn = 'P = ' + f2(Fr); }
+    else { P = 0.56 * Fr + ey.Y * Fa; I.X = 0.56; I.Y = ey.Y; I.cond = 'Fa/Fr = ' + rs + ' > e = ' + f2(ey.e); I.eqP = 'P = X Fr + Y Fa'; I.eqPn = 'P = 0.56 x ' + f2(Fr) + ' + ' + f2(ey.Y) + ' x ' + f2(Fa); }
+    P0 = Math.max(Fr, 0.6 * Fr + 0.5 * Fa); I.eqP0 = 'P0 = max(Fr, 0.6 Fr + 0.5 Fa)'; I.eqP0n = 'P0 = max(' + f2(Fr) + ', ' + f2(0.6 * Fr + 0.5 * Fa) + ')';
   } else if (r.type === 'ac') {
-    var lo = Fr > 0 && Fa / Fr <= 1.14;
-    if (pair) { C *= 1.62; C0 *= 2; P = lo ? Fr + 0.55 * Fa : 0.57 * Fr + 0.93 * Fa; P0 = Fr + 0.52 * Fa; }
-    else { P = lo ? Fr : 0.35 * Fr + 0.57 * Fa; P0 = Math.max(Fr, 0.5 * Fr + 0.26 * Fa); }
+    var lo = Fr > 0 && I.ratio <= 1.14; I.e = 1.14;
+    if (pair) {
+      C *= 1.62; C0 *= 2;
+      if (lo) { P = Fr + 0.55 * Fa; I.X = 1; I.Y = 0.55; I.cond = 'Fa/Fr = ' + rs + ' <= 1.14'; I.eqP = 'P = Fr + 0.55 Fa'; I.eqPn = 'P = ' + f2(Fr) + ' + 0.55 x ' + f2(Fa); }
+      else { P = 0.57 * Fr + 0.93 * Fa; I.X = 0.57; I.Y = 0.93; I.cond = 'Fa/Fr = ' + rs + ' > 1.14'; I.eqP = 'P = 0.57 Fr + 0.93 Fa'; I.eqPn = 'P = 0.57 x ' + f2(Fr) + ' + 0.93 x ' + f2(Fa); }
+      P0 = Fr + 0.52 * Fa; I.eqP0 = 'P0 = Fr + 0.52 Fa'; I.eqP0n = 'P0 = ' + f2(Fr) + ' + 0.52 x ' + f2(Fa);
+    } else {
+      if (lo) { P = Fr; I.X = 1; I.Y = 0; I.cond = 'Fa/Fr = ' + rs + ' <= 1.14'; I.eqP = 'P = Fr'; I.eqPn = 'P = ' + f2(Fr); }
+      else { P = 0.35 * Fr + 0.57 * Fa; I.X = 0.35; I.Y = 0.57; I.cond = 'Fa/Fr = ' + rs + ' > 1.14'; I.eqP = 'P = 0.35 Fr + 0.57 Fa'; I.eqPn = 'P = 0.35 x ' + f2(Fr) + ' + 0.57 x ' + f2(Fa); }
+      P0 = Math.max(Fr, 0.5 * Fr + 0.26 * Fa); I.eqP0 = 'P0 = max(Fr, 0.5 Fr + 0.26 Fa)'; I.eqP0n = 'P0 = max(' + f2(Fr) + ', ' + f2(0.5 * Fr + 0.26 * Fa) + ')';
+    }
   } else if (r.type === 'sa') {
-    var m = serMeta(r.ser);
-    P = (Fr > 0 && Fa / Fr <= m.e) ? Fr + m.y1 * Fa : 0.65 * Fr + m.y2 * Fa; P0 = Fr + m.y0 * Fa;
+    var m = serMeta(r.ser), lo2 = Fr > 0 && I.ratio <= m.e; I.e = m.e;
+    if (lo2) { P = Fr + m.y1 * Fa; I.X = 1; I.Y = m.y1; I.cond = 'Fa/Fr = ' + rs + ' <= e = ' + f2(m.e); I.eqP = 'P = Fr + Y1 Fa'; I.eqPn = 'P = ' + f2(Fr) + ' + ' + f2(m.y1) + ' x ' + f2(Fa); }
+    else { P = 0.65 * Fr + m.y2 * Fa; I.X = 0.65; I.Y = m.y2; I.cond = 'Fa/Fr = ' + rs + ' > e = ' + f2(m.e); I.eqP = 'P = 0.65 Fr + Y2 Fa'; I.eqPn = 'P = 0.65 x ' + f2(Fr) + ' + ' + f2(m.y2) + ' x ' + f2(Fa); }
+    P0 = Fr + m.y0 * Fa; I.eqP0 = 'P0 = Fr + Y0 Fa'; I.eqP0n = 'P0 = ' + f2(Fr) + ' + ' + f2(m.y0) + ' x ' + f2(Fa);
   } else {
-    P = Fa; P0 = Fa;
+    P = Fa; P0 = Fa; I.X = 0; I.Y = 1; I.cond = 'Axial load only'; I.eqP = 'P = Fa'; I.eqPn = 'P = ' + f2(Fa); I.eqP0 = 'P0 = Fa'; I.eqP0n = 'P0 = ' + f2(Fa);
     if (Fr > 0.0001) bad = 'NO RADIAL LOAD'; else if (Fa <= 0) bad = 'NEEDS AXIAL LOAD';
   }
   if (!(P > 0.001)) P = 0.001;
   if (!(P0 > 0.001)) P0 = 0.001;
-  var L10h = Math.pow(C / P, 3) * 1e6 / (60 * inp.n), Lnm = L10h * inp.a1 * inp.aS;
+  var L10 = Math.pow(C / P, 3), L10h = L10 * 1e6 / (60 * inp.n), Lnm = L10h * inp.a1 * inp.aS;
   var s0 = C0 / P0, dm = (r.d + r.D) / 2, dmn = dm * inp.n;
   var vf = r.type === 'dg' ? (inp.variant === 'seal' ? 0.55 : inp.variant === 'shield' ? 0.85 : 1) : 1;
   var lim = TYPES[r.type].dmn * vf;
@@ -384,8 +512,8 @@ function evaluate(r, inp) {
   var mass = Math.PI / 4 * (r.D * r.D - r.d * r.d) * r.B * 7.85e-6 * (r.type === 'th' ? 0.6 : 0.55);
   var okLife = Lnm >= inp.lh, okStat = s0 >= inp.s0req;
   return {
-    r: r, C: C, C0: C0, P: P, P0: P0, L10h: L10h, Lnm: Lnm, s0: s0, ratio: Lnm / inp.lh, needC: needC,
-    dmn: dmn, lim: lim, okSpeed: dmn <= lim, light: P < 0.01 * C, bad: bad, mass: mass,
+    r: r, C: C, C0: C0, P: P, P0: P0, L10: L10, L10h: L10h, Lnm: Lnm, s0: s0, ratio: Lnm / inp.lh, needC: needC, dm: dm,
+    dmn: dmn, lim: lim, vf: vf, okSpeed: dmn <= lim, light: P < 0.01 * C, bad: bad, mass: mass, info: I,
     okLife: okLife, okStat: okStat, pass: !bad && okLife && okStat
   };
 }
@@ -531,26 +659,49 @@ function drawSection(cv, type, b) {
 }
 
 /* ---------- life vs load chart ---------- */
-function drawChart(cv, r, inp) {
-  var W = 120, H = 56, ctx = cv.getContext('2d'), x0 = 4, x1 = 116, y0 = 4, y1 = 50;
+var GL = { '0': ['111','101','101','101','111'], '1': ['010','110','010','010','111'], '2': ['111','001','111','100','111'], '3': ['111','001','111','001','111'], '4': ['101','101','111','001','001'], '5': ['111','100','111','001','111'], '6': ['111','100','111','101','111'], '7': ['111','001','001','010','010'], '8': ['111','101','111','101','111'], '9': ['111','101','111','001','111'], '.': ['0','0','0','0','1'], 'K': ['101','101','110','101','101'], 'M': ['101','111','111','101','101'], 'X': ['101','101','010','101','101'] };
+function textW(s) { var w = 0; for (var i = 0; i < s.length; i++) w += GL[s[i]][0].length + (i ? 1 : 0); return w; }
+function drawText(ctx, s, x, y, col, align) {
+  var w = textW(s), cx = align === 'r' ? x - w : align === 'c' ? x - Math.floor(w / 2) : x;
+  ctx.fillStyle = col;
+  for (var i = 0; i < s.length; i++) {
+    var g = GL[s[i]];
+    for (var r = 0; r < 5; r++) for (var c = 0; c < g[r].length; c++) if (g[r][c] === '1') ctx.fillRect(cx + c, y + r, 1, 1);
+    cx += g[0].length + 1;
+  }
+}
+var CH = { W: 220, H: 120, x0: 26, x1: 214, y0: 6, y1: 100 };
+function drawChart(cv, r, inp, cross) {
+  var W = CH.W, H = CH.H, x0 = CH.x0, x1 = CH.x1, y0 = CH.y0, y1 = CH.y1, ctx = cv.getContext('2d');
   ctx.clearRect(0, 0, W, H);
   function ly(l) { return Math.round(y1 - (clamp(Math.log(Math.max(l, 1)) / Math.LN10, 2, 7) - 2) / 5 * (y1 - y0)); }
-  ctx.fillStyle = '#2a1d5e';
-  for (var d = 2; d <= 7; d++) { var yy = ly(Math.pow(10, d)); for (var gx = x0; gx <= x1; gx += 3) ctx.fillRect(gx, yy, 1, 1); }
+  function lx(m) { return Math.round(x0 + (m - 0.25) / 2.75 * (x1 - x0)); }
+  var ty = ly(inp.lh), d, x, y;
+  ctx.fillStyle = 'rgba(156,255,90,.07)'; ctx.fillRect(x0, y0, x1 - x0, ty - y0);
+  ctx.fillStyle = 'rgba(255,90,110,.09)'; ctx.fillRect(x0, ty, x1 - x0, y1 - ty);
+  ctx.fillStyle = '#3b2d78';
+  var labs = ['100', '1K', '10K', '100K', '1M', '10M'];
+  for (d = 2; d <= 7; d++) { y = ly(Math.pow(10, d)); for (x = x0; x <= x1; x += 3) ctx.fillRect(x, y, 1, 1); drawText(ctx, labs[d - 2], x0 - 4, y - 2, '#b4a6e2', 'r'); }
+  var xs = [[0.5, '0.5X'], [1, '1X'], [1.5, '1.5X'], [2, '2X'], [2.5, '2.5X'], [3, '3X']];
+  xs.forEach(function (t) { x = lx(t[0]); for (y = y0; y <= y1; y += 3) ctx.fillRect(x, y, 1, 1); ctx.fillStyle = '#8a7fd0'; ctx.fillRect(x, y1 + 1, 1, 2); drawText(ctx, t[1], x, y1 + 5, '#b4a6e2', 'c'); ctx.fillStyle = '#3b2d78'; });
+  ctx.fillStyle = '#8a7fd0'; ctx.fillRect(x0, y0, 1, y1 - y0 + 1); ctx.fillRect(x0, y1, x1 - x0 + 1, 1);
   ctx.fillStyle = '#37e6c8';
-  var ty = ly(inp.lh); for (var tx = x0; tx <= x1; tx += 4) ctx.fillRect(tx, ty, 2, 1);
+  for (x = x0; x <= x1; x += 5) ctx.fillRect(x, ty, 3, 1);
   if (!r || r.bad) return;
-  var prev = null, ok = '#9cff5a', no = '#ff5a6e';
-  for (var x = x0; x <= x1; x++) {
-    var m = 0.25 + (x - x0) / (x1 - x0) * 2.75, i2 = Object.assign({}, inp, { fr: inp.fr * m, fa: inp.fa * m });
-    var e = Y.evaluate(r.r, i2), py = ly(e.Lnm);
-    ctx.fillStyle = e.Lnm >= inp.lh ? ok : no; ctx.fillRect(x, py, 1, 2);
-    if (prev !== null && Math.abs(py - prev) > 1) { var a = Math.min(py, prev), bb = Math.max(py, prev); ctx.fillRect(x, a, 1, bb - a + 1); }
+  var prev = null;
+  for (x = x0 + 1; x <= x1; x++) {
+    var m = 0.25 + (x - x0) / (x1 - x0) * 2.75, e = Y.evaluate(r.r, Object.assign({}, inp, { fr: inp.fr * m, fa: inp.fa * m })), py = ly(e.Lnm);
+    ctx.fillStyle = e.Lnm >= inp.lh ? '#9cff5a' : '#ff5a6e'; ctx.fillRect(x, py, 1, 2);
+    if (prev !== null && Math.abs(py - prev) > 1) { var a = Math.min(py, prev), b = Math.max(py, prev); ctx.fillRect(x, a, 1, b - a + 2); }
     prev = py;
   }
-  var mx = Math.round(x0 + (1 - 0.25) / 2.75 * (x1 - x0)), my = ly(r.Lnm);
-  ctx.fillStyle = '#ffd45e'; ctx.fillRect(mx - 2, my - 2, 5, 5); ctx.fillStyle = '#04020b'; ctx.fillRect(mx - 1, my - 1, 3, 3);
-  ctx.fillStyle = '#ffd45e'; ctx.fillRect(mx, my, 1, 1);
+  if (cross && isFinite(cross) && cross >= 0.25 && cross <= 3) {
+    var cx = lx(cross); ctx.fillStyle = '#ffffff';
+    for (y = y0; y <= y1; y += 2) ctx.fillRect(cx, y, 1, 1);
+    ctx.fillRect(cx - 1, ty - 1, 3, 3);
+  }
+  var mx = lx(1), my = ly(r.Lnm);
+  ctx.fillStyle = '#04020b'; ctx.fillRect(mx - 3, my - 3, 7, 7); ctx.fillStyle = '#ffd45e'; ctx.fillRect(mx - 2, my - 2, 5, 5); ctx.fillStyle = '#04020b'; ctx.fillRect(mx - 1, my - 1, 3, 3);
 }
 
 window.__Y.draw = { drawFront: drawFront, drawSection: drawSection, drawChart: drawChart, hex: hex, mk: mk, BAY: BAY };
@@ -756,32 +907,49 @@ start();
 })();
 (function () {
 'use strict';
-var Y = window.__Y, $ = Y.$, clamp = Y.clamp, esc = Y.esc, fmt = Y.fmt, fmtH = Y.fmtH, D = Y.draw;
+var Y = window.__Y, $ = Y.$, clamp = Y.clamp, esc = Y.esc, fmt = Y.fmt, fmtH = Y.fmtH, D = Y.draw, BORES = Y.BORES;
 var BASEROWS = Y.buildRows();
-var state = { maker: 'SKF', rows: BASEROWS.slice(), on: {}, sel: null, angle: 0, limit: 40, reduce: false };
+var U = window.__U = { hooks: [], BASEROWS: BASEROWS, state: { maker: 'SKF', rows: BASEROWS.slice(), on: {}, sel: null, angle: 0, tab: 'specify', reduce: false }, current: { list: [], inp: null, sel: null } };
+var state = U.state;
 try { state.reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
 Y.SERIES.forEach(function (s) { state.on[s.id] = true; });
-var current = { list: [], inp: null, sel: null };
+Y.serLabel = function (id) { var s = Y.SERIES.filter(function (x) { return x.id === id; })[0]; return s ? s.label : id; };
+function key(r) { return r.ser + ':' + r.code + ':' + r.d + ':' + r.D + ':' + r.B; }
+function anyOn(t) { return Y.SERIES.some(function (s) { return s.type === t && state.on[s.id]; }); }
+function status(e) {
+  if (e.bad) return { c: 'idle', t: 'N/A' };
+  if (!e.okLife) return { c: 'bad', t: 'SHORT' };
+  if (!e.okStat) return { c: 'warn', t: 'STATIC' };
+  return { c: '', t: 'PASS' };
+}
+U.key = key; U.status = status; U.anyOn = anyOn;
 
-/* ---------- build controls ---------- */
-var BORES = Y.BORES;
+/* ---------- controls ---------- */
 function stepper(id, label, unit, val, min, step) {
-  return '<div><label class="lab" for="' + id + '">' + label + '</label><div class="st"><button type="button" class="b" data-s="' + id + '" data-dir="-1" aria-label="Less">-</button>' +
-    '<input id="' + id + '" type="number" inputmode="decimal" min="' + min + '" step="' + step + '" value="' + val + '"><button type="button" class="b" data-s="' + id + '" data-dir="1" aria-label="More">+</button></div>' +
-    (unit ? '<span class="unit">' + unit + '</span>' : '') + '</div>';
+  return '<div><label class="lab" for="' + id + '">' + label + ' <b>' + unit + '</b></label><div class="st"><button type="button" class="b" data-s="' + id + '" data-dir="-1" aria-label="Decrease ' + label + '">-</button>' +
+    '<input id="' + id + '" type="number" inputmode="decimal" min="' + min + '" step="' + step + '" value="' + val + '"><button type="button" class="b" data-s="' + id + '" data-dir="1" aria-label="Increase ' + label + '">+</button></div></div>';
 }
 function select(id, label, opts, sel) {
   return '<div><label class="lab" for="' + id + '">' + label + '</label><div class="sel"><select id="' + id + '">' + opts.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === sel ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></div></div>';
 }
-$('f-load').innerHTML = stepper('d', 'BORE d', 'mm', 40, 1, 5) + stepper('n', 'SPEED', 'rpm', 1450, 1, 50) + stepper('fr', 'RADIAL Fr', 'kN', 2.5, 0, 0.1) + stepper('fa', 'AXIAL Fa', 'kN', 0.5, 0, 0.1);
-$('f-life').innerHTML = stepper('lh', 'LIFE L10h', 'h', 20000, 1, 1000) + select('rel', 'RELIABLE', [['1', '90 %'], ['0.64', '95 %'], ['0.55', '96 %'], ['0.47', '97 %'], ['0.37', '98 %'], ['0.25', '99 %']], '1') +
-  select('cond', 'CLEAN', [['1.5', 'IDEAL'], ['1', 'GOOD'], ['0.5', 'DIRTY']], '1') + select('temp', 'TEMP', [['1', '120 C'], ['1.0', '150 C'], ['0.9', '200 C'], ['0.75', '250 C']], '1') +
-  select('s0', 'STATIC s0', [['1', '1.0 SMOOTH'], ['1.5', '1.5 NORMAL'], ['2', '2.0 SHOCK'], ['3', '3.0 SEVERE']], '1.5');
-$('f-fit').innerHTML = stepper('maxd', 'MAX OD', 'mm, 0 = any', 0, 0, 5) + stepper('maxb', 'MAX WIDTH', 'mm, 0 = any', 0, 0, 1) +
-  select('variant', 'VARIANT', [['open', 'OPEN'], ['shield', 'SHIELD'], ['seal', 'SEAL']], 'open') + select('arr', 'ANGULAR', [['single', 'SINGLE'], ['pair', 'PAIR']], 'single');
-var PRESETS = [['HOME', 4000, 1], ['FAN', 20000, 1], ['MOTOR', 20000, 1.5], ['GEAR', 30000, 2], ['PUMP', 40000, 1.5], ['MILL', 60000, 2]];
+$('f-load').innerHTML = stepper('d', 'Bore d', 'mm', 40, 1, 5) + stepper('n', 'Speed n', 'rpm', 1450, 1, 50) + stepper('fr', 'Radial load Fr', 'kN', 2.5, 0, 0.1) + stepper('fa', 'Axial load Fa', 'kN', 0.5, 0, 0.1);
+$('f-life').innerHTML = stepper('lh', 'Required life L10h', 'hours', 20000, 1, 1000) +
+  select('rel', 'Reliability (a1)', [['1', '90 %'], ['0.64', '95 %'], ['0.55', '96 %'], ['0.47', '97 %'], ['0.37', '98 %'], ['0.25', '99 %']], '1') +
+  select('cond', 'Cleanliness (aS)', [['1.5', 'Ideal'], ['1', 'Good'], ['0.5', 'Dirty']], '1') +
+  select('temp', 'Temperature (ft)', [['120', '120 C or less'], ['150', '150 C'], ['200', '200 C'], ['250', '250 C']], '120') +
+  select('s0', 'Minimum static s0', [['1', '1.0 smooth'], ['1.5', '1.5 normal'], ['2', '2.0 shock'], ['3', '3.0 severe']], '1.5') +
+  '<div style="grid-column:1/-1"><p class="note" id="lh-note"></p></div>';
+$('f-fit').innerHTML = stepper('maxd', 'Max outer D', 'mm, 0 = any', 0, 0, 5) + stepper('maxb', 'Max width B', 'mm, 0 = any', 0, 0, 1) +
+  select('variant', 'Variant (deep groove)', [['open', 'Open'], ['shield', 'Shielded'], ['seal', 'Sealed']], 'open') +
+  select('arr', 'Angular contact', [['single', 'Single'], ['pair', 'Pair, back to back']], 'single');
+var PRESETS = [['HOUSEHOLD', 4000, 1], ['FAN', 20000, 1], ['MOTOR', 20000, 1.5], ['GEARBOX', 30000, 2], ['PUMP', 40000, 1.5], ['MILL', 60000, 2]];
 $('presets').innerHTML = PRESETS.map(function (p, i) { return '<button type="button" class="b sm" data-p="' + i + '">' + p[0] + '</button>'; }).join('');
-
+var TNOTE = {
+  dg: 'Radial load with some axial. Fast, quiet, low cost. No misalignment allowance.',
+  ac: 'Combined radial and axial load. A single row takes axial load one way only, so pair it or add a counter bearing.',
+  sa: 'Tolerates shaft misalignment of roughly 3 degrees. Lower rating than a deep groove bearing of the same bore.',
+  th: 'Axial load in one direction only, no radial load. Needs a minimum axial load and moderate speed.'
+};
 function drawTypes() {
   var samples = { dg: { d: 40, D: 80, B: 18 }, ac: { d: 40, D: 80, B: 18 }, sa: { d: 40, D: 80, B: 23 }, th: { d: 40, D: 68, B: 19 } };
   $('types').innerHTML = Y.TORDER.map(function (t) {
@@ -789,29 +957,45 @@ function drawTypes() {
     return '<button type="button" class="b tp" data-t="' + t + '" aria-pressed="' + anyOn(t) + '"><canvas width="96" height="72" data-c="' + t + '"></canvas>' + Y.TYPES[t].name + '<span>' + n + ' sizes</span></button>';
   }).join('');
   Y.TORDER.forEach(function (t) { D.drawSection(document.querySelector('canvas[data-c="' + t + '"]'), t, samples[t]); });
+  var tn = $('tnote');
+  if (!tn) { $('series').parentNode.insertAdjacentHTML('afterend', '<div class="legend" id="tnote"></div>'); tn = $('tnote'); }
+  tn.innerHTML = Y.TORDER.map(function (t) { return '<p style="opacity:' + (anyOn(t) ? 1 : 0.45) + '"><b style="font-family:var(--f1);font-weight:400;font-size:8px;color:var(--teal);flex:none;width:92px">' + Y.TYPES[t].name + '</b><span>' + TNOTE[t] + '</span></p>'; }).join('');
 }
-function anyOn(t) { return Y.SERIES.some(function (s) { return s.type === t && state.on[s.id]; }); }
 function drawSeries() {
   $('series').innerHTML = Y.SERIES.map(function (s) { return '<button type="button" class="b sm" data-sr="' + s.id + '" aria-pressed="' + !!state.on[s.id] + '">' + s.label + '</button>'; }).join('');
 }
+U.drawTypes = drawTypes;
 
-/* ---------- inputs ---------- */
+/* ---------- tabs ---------- */
+var tabs = Array.prototype.slice.call(document.querySelectorAll('#tabs [role=tab]'));
+function showTab(name) {
+  tabs.forEach(function (t) { var on = t.dataset.tab === name; t.setAttribute('aria-selected', on ? 'true' : 'false'); t.tabIndex = on ? 0 : -1; $('tab-' + t.dataset.tab).hidden = !on; });
+  state.tab = name; $('stage').textContent = name.toUpperCase();
+}
+U.showTab = showTab;
+$('tabs').addEventListener('keydown', function (ev) {
+  var i = tabs.indexOf(document.activeElement); if (i < 0) return;
+  if (ev.key === 'ArrowRight' || ev.key === 'ArrowLeft') {
+    var n = tabs[(i + (ev.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; n.focus(); showTab(n.dataset.tab); ev.preventDefault();
+  }
+});
+tabs.forEach(function (t) { t.tabIndex = t.getAttribute('aria-selected') === 'true' ? 0 : -1; });
+
+/* ---------- inputs and render ---------- */
+var TEMPF = { '120': 1, '150': 1, '200': 0.9, '250': 0.75 };
 function num(id, def, min) { var v = parseFloat($(id).value); if (!isFinite(v)) v = def; return v < min ? min : v; }
 function readInputs() {
-  var temp = $('temp'), ti = temp.selectedIndex, fts = [1, 1, 0.9, 0.75];
   return {
     d: num('d', 40, 1), n: num('n', 1450, 1), fr: num('fr', 0, 0), fa: num('fa', 0, 0), lh: num('lh', 20000, 1),
-    a1: parseFloat($('rel').value) || 1, aS: parseFloat($('cond').value) || 1, ft: fts[ti] || 1, s0req: parseFloat($('s0').value) || 1.5,
+    a1: parseFloat($('rel').value) || 1, aS: parseFloat($('cond').value) || 1, ft: TEMPF[$('temp').value] || 1, s0req: parseFloat($('s0').value) || 1.5,
     maxD: num('maxd', 0, 0), maxB: num('maxb', 0, 0), variant: $('variant').value, pair: $('arr').value === 'pair', all: $('allb').getAttribute('aria-pressed') === 'true'
   };
 }
-
-/* ---------- render ---------- */
+U.readInputs = readInputs;
+function visible(r) { return r.ser === 'custom' ? anyOn(r.type) : !!state.on[r.ser]; }
 function render() {
   var inp = readInputs();
-  var rows = state.rows.filter(function (r) {
-    return state.on[r.ser] !== false && (r.ser === 'custom' || state.on[r.ser]) && (inp.all || Math.abs(r.d - inp.d) < 0.01) && (!inp.maxD || r.D <= inp.maxD) && (!inp.maxB || r.B <= inp.maxB);
-  });
+  var rows = state.rows.filter(function (r) { return visible(r) && (inp.all || Math.abs(r.d - inp.d) < 0.01) && (!inp.maxD || r.D <= inp.maxD) && (!inp.maxB || r.B <= inp.maxB); });
   var ev = rows.map(function (r) { return Y.evaluate(r, inp); }), sort = $('sort').value;
   ev.sort(function (a, b) {
     if (a.pass !== b.pass) return a.pass ? -1 : 1;
@@ -823,119 +1007,293 @@ function render() {
   });
   var sel = ev.filter(function (e) { return key(e.r) === state.sel; })[0];
   if (!sel) { sel = ev[0] || null; state.sel = sel ? key(sel.r) : null; }
-  current = { list: ev, inp: inp, sel: sel };
+  U.current = { list: ev, inp: inp, sel: sel, total: rows.length };
+  var yrs = inp.lh / 8760;
+  $('lh-note').textContent = 'About ' + (yrs >= 1 ? fmt(yrs, 1) + ' years' : fmt(inp.lh / 24, 0) + ' days') + ' running 24 h a day. At ' + fmt(inp.n, 0) + ' rpm that is ' + fmt(60 * inp.n * inp.lh / 1e6, 0) + ' million revolutions.';
   var np = ev.filter(function (e) { return e.pass; }).length;
-  $('count').textContent = np + '/' + ev.length;
   $('status').textContent = state.rows.length + ' SIZES / ' + np + ' PASS';
-  renderList(ev, sel);
-  renderDetail(sel, inp);
-}
-function key(r) { return r.ser + ':' + r.code + ':' + r.d + ':' + r.D + ':' + r.B; }
-
-function renderList(ev, sel) {
-  var inp = current.inp, html = '', shown = ev.slice(0, state.limit);
-  shown.forEach(function (e, i) {
-    var filled = Math.round(clamp(e.ratio, 0, 2) / 2 * 20), blk = '';
-    for (var j = 0; j < 20; j++) blk += '<i class="' + (j < filled ? 'on' : '') + '"></i>';
-    html += '<li><button type="button" class="b item" data-k="' + esc(key(e.r)) + '" aria-pressed="' + (sel && key(sel.r) === key(e.r)) + '">' +
-      '<span class="nm">' + esc(Y.shortName(e.r, state.maker, inp.variant)) + '</span>' +
-      '<span class="tag ' + (e.pass ? '' : 'f') + '">' + (e.pass ? 'PASS' : e.bad ? 'NO' : 'FAIL') + '</span>' +
-      '<span class="meta">' + Y.TYPES[e.r.type].name + ' &middot; ' + fmt(e.r.d, 0) + ' x ' + fmt(e.r.D, 0) + ' x ' + fmt(e.r.B, 0) + ' <span class="tag ' + (e.r.est ? 'e' : 'r') + '">' + (e.r.est ? 'EST' : 'REF') + '</span></span>' +
-      '<span class="blocks' + (e.okLife ? '' : ' bad') + '" aria-hidden="true">' + blk + '</span>' +
-      '<span class="nums"><span>' + (e.bad ? e.bad : fmtH(e.Lnm) + ' (' + fmt(e.ratio, 1) + 'x)') + '</span><span>s0 ' + fmt(e.s0, 1) + '</span><span>C ' + fmt(e.C, 1) + '</span></span></button></li>';
-  });
-  $('list').innerHTML = html;
-  var em = $('empty'), more = $('more');
-  more.hidden = ev.length <= state.limit; more.textContent = 'MORE (' + (ev.length - state.limit) + ')';
-  if (!ev.length) { em.hidden = false; em.textContent = 'NO SIZE. Pick a standard bore (10-100), turn on a series, or use ALL BORES.'; }
-  else if (!ev.some(function (e) { return e.pass; })) {
-    var best = ev.reduce(function (m, e) { return e.ratio > m.ratio ? e : m; }, ev[0]);
-    em.hidden = false; em.textContent = 'NOTHING CLEARS. Best is ' + Y.shortName(best.r, state.maker, inp.variant) + ' at ' + fmt(best.ratio, 2) + 'x. Try a heavier series, bigger shaft, pair, or less life.';
-  } else em.hidden = true;
-}
-
-function renderDetail(e, inp) {
-  var specs = $('specs'), v = $('verdict'), w = $('warns');
-  if (!e) {
-    $('v-name').textContent = '-'; $('v-sub').textContent = ''; specs.innerHTML = ''; v.textContent = ''; v.className = 'verdict'; w.innerHTML = '';
-    $('front').getContext('2d').clearRect(0, 0, 64, 64); $('sect').getContext('2d').clearRect(0, 0, 96, 72); D.drawChart($('chart'), null, inp); return;
+  // HUD
+  var st = $('hud-stamp');
+  if (sel) {
+    var s = status(sel);
+    $('hud-name').textContent = Y.desig(sel.r, state.maker, inp.variant);
+    $('hud-sub').textContent = Y.TYPES[sel.r.type].name + ' / ' + (sel.r.ser === 'custom' ? 'CUSTOM' : 'SERIES ' + Y.serLabel(sel.r.ser)) + ' / ' + fmt(sel.r.d, 0) + ' x ' + fmt(sel.r.D, 0) + ' x ' + fmt(sel.r.B, 0) + ' mm';
+    $('hn-life').textContent = sel.bad ? '-' : fmtH(sel.Lnm); $('hn-s0').textContent = sel.bad ? '-' : fmt(sel.s0, 2);
+    st.className = 'stamp' + (s.c ? ' ' + s.c : ''); st.textContent = s.t;
+    D.drawFront($('hud-c'), sel.r, state.angle);
+  } else {
+    $('hud-name').textContent = '-'; $('hud-sub').textContent = 'No size matches. Pick a standard bore (10 to 100 mm), enable a series, or search all bores.';
+    $('hn-life').textContent = '-'; $('hn-s0').textContent = '-'; st.className = 'stamp idle'; st.textContent = 'N/A';
+    $('hud-c').getContext('2d').clearRect(0, 0, 64, 64);
   }
-  var r = e.r;
-  $('v-name').textContent = Y.desig(r, state.maker, inp.variant);
-  $('v-sub').textContent = Y.TYPES[r.type].name + (r.ser === 'custom' ? ' / CUSTOM' : ' / SERIES ' + Y.serLabel(r.ser));
-  var items = [['Bore d', fmt(r.d, 1) + ' mm'], ['Outer D', fmt(r.D, 1) + ' mm'], ['Width B', fmt(r.B, 1) + ' mm'], ['Mass', e.mass < 1 ? fmt(e.mass * 1000, 0) + ' g' : fmt(e.mass, 2) + ' kg'],
-    ['Dynamic C', fmt(e.C, 1) + ' kN'], ['Static C0', fmt(e.C0, 1) + ' kN'], ['Load P', fmt(e.P, 2) + ' kN'], ['Static P0', fmt(e.P0, 2) + ' kN'],
-    ['L10h', fmtH(e.L10h)], ['Adjusted', fmtH(e.Lnm)], ['s0', fmt(e.s0, 2)], ['C needed', fmt(e.needC, 1) + ' kN'], ['dm x n', fmt(e.dmn, 0)], ['Limit', fmt(e.lim, 0)]];
-  specs.innerHTML = items.map(function (it) { return '<div><dt>' + it[0] + '</dt><dd>' + it[1] + '</dd></div>'; }).join('');
-  var msg;
-  if (e.bad) msg = e.bad + '. Pick another type.';
-  else if (e.pass) msg = 'CLEAR. ' + fmtH(e.Lnm) + ' vs ' + fmtH(inp.lh) + ' (' + fmt(e.ratio, 2) + 'x). s0 ' + fmt(e.s0, 2) + '.';
-  else if (!e.okLife && !e.okStat) msg = 'TOO SMALL. Life ' + fmtH(e.Lnm) + ', s0 ' + fmt(e.s0, 2) + ' under ' + fmt(inp.s0req, 1) + '.';
-  else if (!e.okLife) msg = 'LIFE SHORT. ' + fmtH(e.Lnm) + ' vs ' + fmtH(inp.lh) + '. Needs C ' + fmt(e.needC, 1) + ' kN.';
-  else msg = 'STATIC LOW. s0 ' + fmt(e.s0, 2) + ' under ' + fmt(inp.s0req, 1) + '.';
-  v.className = 'verdict ' + (e.pass ? 'ok' : 'no'); v.textContent = msg;
-  var ws = [];
-  if (!e.okSpeed) ws.push('SPEED OVER LIMIT'); if (e.light) ws.push('LIGHT LOAD'); if (r.est) ws.push('RATING ESTIMATED'); if (r.type === 'ac' && !inp.pair) ws.push('NEEDS 2ND BEARING');
-  w.innerHTML = ws.map(function (t) { return '<span>' + t + '</span>'; }).join('');
-  D.drawSection($('sect'), r.type, r); D.drawFront($('front'), r, state.angle); D.drawChart($('chart'), e, inp);
-  $('ax-t').textContent = 'TARGET ' + fmtH(inp.lh);
+  $('hn-tgt').textContent = fmtH(inp.lh);
+  U.hooks.forEach(function (fn) { fn(U.current, inp); });
 }
-Y.serLabel = function (id) { var s = Y.SERIES.filter(function (x) { return x.id === id; })[0]; return s ? s.label : id; };
+U.render = render;
 
 /* ---------- events ---------- */
 document.addEventListener('click', function (ev) {
   var t = ev.target.closest('button'); if (!t) return;
+  if (t.dataset.tab) { showTab(t.dataset.tab); return; }
   if (t.dataset.s) {
     var inp = $(t.dataset.s), dir = +t.dataset.dir, v = parseFloat(inp.value) || 0;
-    if (t.dataset.s === 'd') { var i = BORES.indexOf(v); if (i < 0) { i = 0; BORES.forEach(function (b, k) { if (Math.abs(b - v) < Math.abs(BORES[i] - v)) i = k; }); } else i = clamp(i + dir, 0, BORES.length - 1); inp.value = BORES[i]; }
-    else { var st = parseFloat(inp.step) || 1; v = Math.round((v + dir * st) / st * 1000) / 1000 * st; inp.value = Math.max(parseFloat(inp.min) || 0, +v.toFixed(3)); }
+    if (t.dataset.s === 'd') {
+      var i = BORES.indexOf(v);
+      if (i < 0) { i = 0; BORES.forEach(function (b, k) { if (Math.abs(b - v) < Math.abs(BORES[i] - v)) i = k; }); } else i = clamp(i + dir, 0, BORES.length - 1);
+      inp.value = BORES[i];
+    } else { var st = parseFloat(inp.step) || 1; v = Math.round((v + dir * st) * 1000) / 1000; inp.value = Math.max(parseFloat(inp.min) || 0, +v.toFixed(3)); }
     state.sel = null; render();
   } else if (t.dataset.m) {
     state.maker = t.dataset.m; Array.prototype.forEach.call($('maker').children, function (c) { c.setAttribute('aria-pressed', c === t ? 'true' : 'false'); }); render();
   } else if (t.dataset.t) {
     var on = !anyOn(t.dataset.t); Y.SERIES.forEach(function (s) { if (s.type === t.dataset.t) state.on[s.id] = on; });
-    state.sel = null; drawSeries(); refreshTypes(); render();
+    state.sel = null; drawSeries(); drawTypes(); render();
   } else if (t.dataset.sr) {
-    state.on[t.dataset.sr] = !state.on[t.dataset.sr]; state.sel = null; drawSeries(); refreshTypes(); render();
+    state.on[t.dataset.sr] = !state.on[t.dataset.sr]; state.sel = null; drawSeries(); drawTypes(); render();
   } else if (t.dataset.p) {
     var p = PRESETS[+t.dataset.p]; $('lh').value = p[1]; $('s0').value = String(p[2]); state.sel = null; render();
-  } else if (t.dataset.k) {
-    state.sel = t.dataset.k; render(); $('h5a').scrollIntoView({ block: 'nearest', behavior: state.reduce ? 'auto' : 'smooth' });
   } else if (t.id === 'allb') {
     t.setAttribute('aria-pressed', t.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); state.sel = null; render();
-  } else if (t.id === 'more') { state.limit += 40; render(); }
-  else if (t.id === 'copy') copySummary();
-  else if (t.id === 'apply') {
-    var rows = Y.parseCSV($('csv').value);
-    if (!rows.length) { $('csv-msg').textContent = 'NO VALID ROWS'; return; }
-    state.rows = state.rows.filter(function (r) { return r.ser !== 'custom'; }).concat(rows); state.sel = null; $('csv-msg').textContent = rows.length + ' ADDED'; drawTypes(); render();
-  } else if (t.id === 'reset') { state.rows = BASEROWS.slice(); state.sel = null; $('csv-msg').textContent = 'RESET'; drawTypes(); render(); }
+  }
 });
-function refreshTypes() { Array.prototype.forEach.call(document.querySelectorAll('[data-t]'), function (b) { b.setAttribute('aria-pressed', anyOn(b.dataset.t) ? 'true' : 'false'); }); }
-['change', 'input'].forEach(function (n) {
-  $('controls').addEventListener(n, function (ev) { if (ev.target.matches('input,select')) { state.sel = null; render(); } });
-});
+$('controls').addEventListener('input', function (ev) { if (ev.target.matches('input,select')) { state.sel = null; render(); } });
+$('controls').addEventListener('change', function (ev) { if (ev.target.matches('select')) { state.sel = null; render(); } });
 $('sort').addEventListener('change', render);
 
-function copySummary() {
-  var e = current.sel, inp = current.inp; if (!e) return;
-  var txt = Y.desig(e.r, state.maker, inp.variant) + ' | ' + e.r.d + 'x' + e.r.D + 'x' + e.r.B + ' mm | C ' + fmt(e.C, 1) + ' kN, C0 ' + fmt(e.C0, 1) + ' kN | Fr ' + inp.fr + ' kN, Fa ' + inp.fa + ' kN, ' + inp.n + ' rpm | L10h ' + fmtH(e.Lnm) + ' (target ' + fmtH(inp.lh) + ') | s0 ' + fmt(e.s0, 2) + (e.r.est ? ' | rating estimated' : '');
-  var out = $('out'); out.value = txt;
-  function fallback() { out.hidden = false; out.focus(); out.select(); }
-  try { navigator.clipboard.writeText(txt).then(function () { $('copy').textContent = 'COPIED'; setTimeout(function () { $('copy').textContent = 'COPY'; }, 1400); }, fallback); } catch (er) { fallback(); }
-}
-
 /* ---------- start ---------- */
-$('csv').value = '# type, series, code, d, D, B, C, C0\ndg, 62, 6208, 40, 80, 18, 32.5, 19';
 D.drawFront($('logo'), { d: 40, D: 80, B: 18 }, 0.6);
-drawTypes(); drawSeries(); render();
+drawTypes(); drawSeries();
 var t0 = Date.now();
 setInterval(function () { var s = Math.floor((Date.now() - t0) / 1000); $('tc').textContent = ('0' + Math.floor(s / 3600)).slice(-2) + ':' + ('0' + Math.floor(s / 60) % 60).slice(-2) + ':' + ('0' + s % 60).slice(-2); }, 1000);
 if (!state.reduce) setInterval(function () {
-  var e = current.sel, inp = current.inp; if (!e) return;
-  state.angle += 0.14 + Math.min(inp.n, 6000) / 6000 * 0.4; D.drawFront($('front'), e.r, state.angle);
+  var e = U.current.sel, inp = U.current.inp; if (!e || !inp) return;
+  state.angle += 0.14 + Math.min(inp.n, 6000) / 6000 * 0.4;
+  D.drawFront($('hud-c'), e.r, state.angle);
+  if (state.tab === 'bearing') D.drawFront($('front'), e.r, state.angle);
 }, 90);
+})();
+(function () {
+'use strict';
+var U = window.__U, Y = window.__Y, $ = Y.$, clamp = Y.clamp, esc = Y.esc, fmt = Y.fmt, fmtH = Y.fmtH, D = Y.draw, state = U.state;
+var lim = { cand: 30, cat: 60 };
+
+/* ---------- helpers ---------- */
+function margin(e, inp) {
+  if (!e || e.bad) return null;
+  function L(m) { return Y.evaluate(e.r, Object.assign({}, inp, { fr: inp.fr * m, fa: inp.fa * m })).Lnm; }
+  var lo = 0.001, hi = 50, i;
+  if (L(hi) >= inp.lh) return Infinity;
+  if (L(lo) < inp.lh) return 0;
+  for (i = 0; i < 40; i++) { var mid = (lo + hi) / 2; if (L(mid) >= inp.lh) lo = mid; else hi = mid; }
+  return lo;
+}
+U.margin = margin;
+function track(val, max, colorFn, tick, cells) {
+  cells = cells || 30; var h = '<span class="track" aria-hidden="true">';
+  for (var i = 0; i < cells; i++) { var v = (i + 0.5) / cells * max; h += '<i class="' + (v <= val ? colorFn(v) : '') + '"></i>'; }
+  if (tick != null) h += '<span class="tick" style="left:calc(' + (tick / max * 100).toFixed(2) + '% - 1px)"></span>';
+  return h + '</span>';
+}
+function pill(st) { return '<span class="pill' + (st.c ? ' ' + st.c : '') + '">' + st.t + '</span>'; }
+function datapill(r) { return '<span class="pill ' + (r.est ? 'est' : 'ref') + '">' + (r.est ? 'EST' : 'REF') + '</span>'; }
+function mini(e) {
+  var f = Math.round(clamp(e.ratio, 0, 2) / 2 * 10), c = e.ratio >= 1 ? (e.okStat ? 'g' : 'w') : 'r', h = '<span class="mini" aria-hidden="true">';
+  for (var i = 0; i < 10; i++) h += '<i class="' + (i < f ? c : '') + '"></i>';
+  return h + '</span>';
+}
+function name(e, inp) { return Y.shortName(e.r, state.maker, inp.variant); }
+
+/* ---------- candidates ---------- */
+U.hooks.push(function (cur, inp) {
+  var ev = cur.list, sel = cur.sel, shown = ev.slice(0, lim.cand), html = '';
+  shown.forEach(function (e) {
+    var on = sel && U.key(sel.r) === U.key(e.r);
+    html += '<tr class="row" tabindex="0" data-k="' + esc(U.key(e.r)) + '" aria-selected="' + !!on + '"><td class="nm">' + esc(name(e, inp)) + '</td><td>' + fmt(e.r.d, 0) + ' x ' + fmt(e.r.D, 0) + ' x ' + fmt(e.r.B, 0) + '</td>' +
+      '<td class="num">' + fmt(e.C, 1) + '</td><td class="num">' + (e.bad ? '-' : fmtH(e.Lnm)) + '</td><td>' + (e.bad ? '' : mini(e) + fmt(e.ratio, 1) + 'x') + '</td>' +
+      '<td class="num">' + (e.bad ? '-' : fmt(e.s0, 2)) + '</td><td>' + pill(U.status(e)) + '</td><td>' + datapill(e.r) + '</td></tr>';
+  });
+  $('list').innerHTML = html;
+  var np = ev.filter(function (e) { return e.pass; }).length;
+  $('count').textContent = np + ' / ' + ev.length + ' PASS';
+  $('c-sub').textContent = 'Sizes with ' + (inp.all ? 'any bore' : 'a ' + fmt(inp.d, 0) + ' mm bore') + '. Select a row, then open BEARING for drawings and the data sheet.';
+  var em = $('empty'), more = $('more');
+  more.hidden = ev.length <= lim.cand; more.textContent = 'MORE (' + (ev.length - lim.cand) + ')';
+  if (!ev.length) { em.hidden = false; em.textContent = 'No size matches. Choose a standard bore from 10 to 100 mm, enable a series, relax the size limits, or search all bores.'; }
+  else if (!np) {
+    var best = ev.reduce(function (m, e) { return !e.bad && e.ratio > m.ratio ? e : m; }, ev[0]);
+    em.hidden = false; em.textContent = 'Nothing meets the requirement. The closest is ' + name(best, inp) + ' at ' + fmt(best.ratio, 2) + 'x the required life. Try a heavier series, a larger shaft, a pair, or a shorter life.';
+  } else em.hidden = true;
+});
+
+/* ---------- bearing sheet ---------- */
+function srow(sym, q, val, unit) { return '<tr><td class="sym">' + sym + '</td><td class="q">' + q + '</td><td class="num">' + val + '</td><td class="u">' + unit + '</td></tr>'; }
+function grp(t) { return '<tr class="grp"><td colspan="4">' + t + '</td></tr>'; }
+var SECT = {
+  dg: 'Half section. Cyan edge: cut face of the ring. Hatched fill: steel. Shaded sphere: ball.',
+  ac: 'Half section. The dashed green line is the 40 degree contact line carried through the ball.',
+  sa: 'Half section. Two ball rows run in a spherical outer raceway, which allows misalignment.',
+  th: 'Half section. Two flat washers with a ball between them. The load acts along the shaft.'
+};
+U.hooks.push(function (cur, inp) {
+  var e = cur.sel, v = $('verdict'), w = $('warns');
+  if (!e) { $('v-name').textContent = '-'; $('v-sub').textContent = ''; $('specs').innerHTML = ''; v.textContent = ''; v.className = 'verdict'; w.innerHTML = ''; return; }
+  var r = e.r;
+  $('v-name').textContent = Y.desig(r, state.maker, inp.variant);
+  $('v-sub').textContent = Y.TYPES[r.type].name + (r.ser === 'custom' ? ' / custom row' : ' / series ' + Y.serLabel(r.ser)) + (r.est ? ' / estimated rating' : ' / catalogue rating');
+  $('sect-cap').textContent = SECT[r.type];
+  D.drawSection($('sect'), r.type, r); D.drawFront($('front'), r, state.angle);
+  var mg = margin(e, inp);
+  $('specs').innerHTML =
+    grp('GEOMETRY') + srow('d', 'Bore diameter', fmt(r.d, 1), 'mm') + srow('D', 'Outside diameter', fmt(r.D, 1), 'mm') + srow('B', r.type === 'th' ? 'Height' : 'Width', fmt(r.B, 1), 'mm') +
+    srow('dm', 'Mean diameter (d + D) / 2', fmt(e.dm, 1), 'mm') + srow('m', 'Mass, approximate', e.mass < 1 ? fmt(e.mass * 1000, 0) : fmt(e.mass, 2), e.mass < 1 ? 'g' : 'kg') +
+    grp('RATINGS') + srow('C', 'Dynamic load rating' + (e.info.ft < 1 || e.info.pair ? ' (corrected)' : ''), fmt(e.C, 1), 'kN') + srow('C0', 'Static load rating' + (e.info.ft < 1 || e.info.pair ? ' (corrected)' : ''), fmt(e.C0, 1), 'kN') +
+    grp('LOAD') + srow('Fr', 'Radial load', fmt(inp.fr, 2), 'kN') + srow('Fa', 'Axial load', fmt(inp.fa, 2), 'kN') + srow('P', 'Equivalent dynamic load', fmt(e.P, 2), 'kN') + srow('P0', 'Equivalent static load', fmt(e.P0, 2), 'kN') + srow('P/C', 'Load ratio', fmt(e.P / e.C, 3), '') +
+    grp('LIFE') + srow('L10', 'Basic rating life', fmt(e.L10, 0), 'Mrev') + srow('L10h', 'Basic rating life', fmtH(e.L10h), '') + srow('Lnm', 'Adjusted rating life', e.bad ? '-' : fmtH(e.Lnm), '') +
+    srow('Lreq', 'Required life', fmtH(inp.lh), '') + srow('Creq', 'Dynamic rating needed', fmt(e.needC, 1), 'kN') + srow('xmax', 'Load multiple for required life', mg == null ? '-' : (isFinite(mg) ? fmt(mg, 2) : '> 50'), 'x') +
+    grp('SAFETY') + srow('s0', 'Static safety factor', fmt(e.s0, 2), '') + srow('s0 min', 'Required minimum', fmt(inp.s0req, 1), '') + srow('dm n', 'Speed index', fmt(e.dmn, 0), 'mm/min') + srow('limit', 'Approximate limit', fmt(e.lim, 0), 'mm/min');
+  var s = U.status(e), msg;
+  if (e.bad) msg = e.bad + '. This type cannot carry the load case.';
+  else if (s.t === 'PASS') msg = 'PASS. Adjusted life ' + fmtH(e.Lnm) + ' against ' + fmtH(inp.lh) + ' required (' + fmt(e.ratio, 2) + 'x). Static safety ' + fmt(e.s0, 2) + '.';
+  else if (!e.okLife && !e.okStat) msg = 'SHORT. Life is ' + fmtH(e.Lnm) + ' against ' + fmtH(inp.lh) + ', and s0 ' + fmt(e.s0, 2) + ' is below ' + fmt(inp.s0req, 1) + '.';
+  else if (!e.okLife) msg = 'SHORT. Life is ' + fmtH(e.Lnm) + ' against ' + fmtH(inp.lh) + '. A dynamic rating of at least ' + fmt(e.needC, 1) + ' kN is needed.';
+  else msg = 'STATIC. Life is enough, but static safety ' + fmt(e.s0, 2) + ' is below the minimum ' + fmt(inp.s0req, 1) + '.';
+  v.className = 'verdict ' + (e.pass ? 'ok' : 'no'); v.textContent = msg;
+  var ws = [];
+  if (!e.okSpeed) ws.push(['SPEED', 'dm x n = ' + fmt(e.dmn, 0) + ' is above the approximate limit of ' + fmt(e.lim, 0) + ' for this type and variant. Check the maker limiting speed.']);
+  if (e.light && !e.bad) ws.push(['LIGHT', 'P/C is below 0.01. Balls can skid under so little load. Consider preload or a smaller bearing.']);
+  if (r.est) ws.push(['EST', 'This rating is estimated, not taken from the catalogue. Verify C and C0 before you rely on it.']);
+  if (r.type === 'ac' && !inp.pair) ws.push(['PAIR', 'A single angular contact bearing carries axial load in one direction only. Pair it or add a counter bearing.']);
+  if (r.type === 'th') ws.push(['AXIAL', 'Thrust bearings need a minimum axial load to keep the balls rolling. Check the catalogue value.']);
+  w.innerHTML = ws.map(function (x) { return '<p><b>' + x[0] + '</b><span>' + x[1] + '</span></p>'; }).join('');
+});
+
+/* ---------- charts and gauges ---------- */
+function zLife(v) { return v < 1 ? 'r' : v < 1.5 ? 'w' : 'g'; }
+function zSpeed(v) { return v < 0.8 ? 'g' : v < 1 ? 'w' : 'r'; }
+function zLoad(v) { return v < 0.01 ? 'w' : v < 0.15 ? 'g' : v < 0.25 ? 'w' : 'r'; }
+function gauge(title, valTxt, val, max, zf, mark, scale, why) {
+  return '<div class="gauge"><div class="gh"><b>' + title + '</b><span class="gv">' + valTxt + '</span></div>' + track(Math.min(val, max), max, zf, mark) +
+    '<div class="scale">' + scale.map(function (s) { return '<span>' + s + '</span>'; }).join('') + '</div><p class="why">' + why + '</p></div>';
+}
+U.hooks.push(function (cur, inp) {
+  var e = cur.sel, ev = cur.list;
+  // life against load
+  var mg = margin(e, inp);
+  D.drawChart($('chart'), e, inp, mg);
+  var note = '';
+  if (e && !e.bad) {
+    note = mg === 0 ? 'Even a very light load does not reach the required life with this bearing.' :
+      !isFinite(mg) ? 'This bearing meets the required life at any load shown.' :
+      'You can raise the load to ' + fmt(mg, 2) + 'x your case (equivalent load ' + fmt(e.P * mg, 2) + ' kN) before life drops under ' + fmtH(inp.lh) + '. ' + (mg >= 1 ? 'That is your load margin.' : 'You are already beyond it, so the life target is not met.');
+  } else note = 'No curve. This type cannot carry the load case.';
+  $('chart-note').textContent = note;
+  // candidate margin bars
+  var top = ev.slice(0, 8), html = '';
+  top.forEach(function (x) {
+    var c = x.bad ? 'x' : (x.ratio >= 1 ? (x.okStat ? 'g' : 'w') : 'r');
+    html += '<div class="hb"><span class="lbl">' + esc(name(x, inp)) + '</span>' + track(x.bad ? 0 : Math.min(x.ratio, 3), 3, function () { return c; }, 1) + '<span class="val">' + (x.bad ? 'N/A' : (x.ratio > 3 ? '>3' : fmt(x.ratio, 1)) + 'x') + '</span></div>';
+  });
+  $('bars').innerHTML = html || '<p class="fine">No candidates.</p>';
+  // gauges
+  var g = $('gauges');
+  if (!e || e.bad) { g.innerHTML = '<p class="fine">Gauges appear when a bearing that can carry the load case is selected.</p>'; return; }
+  g.innerHTML =
+    gauge('LIFE MARGIN', fmt(e.ratio, 2) + 'x', e.ratio, 3, zLife, 1, ['0', '1x', '2x', '3x'], 'Adjusted life divided by required life. Red is below 1x, amber is 1x to 1.5x with little margin, green is above.') +
+    gauge('STATIC SAFETY', fmt(e.s0, 2) + ' (min ' + fmt(inp.s0req, 1) + ')', e.s0 / inp.s0req, 3, zLife, 1, ['0', '1x', '2x', '3x'], 'Static safety s0 as a multiple of your minimum. Below 1x risks permanent dents in the raceway.') +
+    gauge('SPEED INDEX', fmt(e.dmn / e.lim * 100, 0) + ' % of limit', e.dmn / e.lim, 1.5, zSpeed, 1, ['0', '0.5', '1.0', '1.5'], 'dm x n against the approximate limit for this type and variant. Amber above 80 %, red above the limit.') +
+    gauge('LOAD RATIO P/C', fmt(e.P / e.C, 3), e.P / e.C, 0.3, zLoad, null, ['0', '0.1', '0.2', '0.3'], 'Green is the usual 0.01 to 0.15. Amber is lightly or heavily loaded (below 0.01 balls may skid, 0.15 to 0.25 is heavy). Red is above 0.25.');
+});
+
+/* ---------- method ---------- */
+function eq(title, lines) { return '<div class="eq"><h3>' + title + '</h3>' + lines.map(function (l, i) { return '<p' + (l[0] === '~' ? ' class="d"' : '') + '>' + (l[0] === '~' ? l.slice(1) : l) + '</p>'; }).join('') + '</div>'; }
+var PEQ = {
+  dg: ['P = Fr when Fa/Fr <= e', 'P = 0.56 Fr + Y Fa when Fa/Fr > e', '~e and Y depend on f0 = Fa/C0 (ISO 281 table, interpolated).'],
+  ac: ['Single row, 40 degrees: P = Fr when Fa/Fr <= 1.14, otherwise P = 0.35 Fr + 0.57 Fa', 'Pair: P = Fr + 0.55 Fa, otherwise P = 0.57 Fr + 0.93 Fa', '~A pair has C x 1.62 and C0 x 2.'],
+  sa: ['P = Fr + Y1 Fa when Fa/Fr <= e', 'P = 0.65 Fr + Y2 Fa when Fa/Fr > e', '~e, Y1 and Y2 are estimated per series.'],
+  th: ['P = Fa', '~Axial load only. Any radial load rules the type out.']
+};
+U.hooks.push(function (cur, inp) {
+  var e = cur.sel, c = $('calc');
+  if (!e) { c.innerHTML = ''; $('m-sub').textContent = 'Select a bearing to see the calculation.'; return; }
+  var r = e.r, I = e.info, f1 = function (x) { return fmt(x, 1); }, f2 = function (x) { return fmt(x, 2); }, mg = margin(e, inp);
+  $('m-sub').textContent = 'Worked for ' + Y.desig(r, state.maker, inp.variant) + '. The numbers follow your inputs.';
+  if (e.bad) { c.innerHTML = '<p><span>--</span><code>' + e.bad + '. A ' + Y.TYPES[r.type].name.toLowerCase() + ' bearing cannot carry this load case, so no life is calculated.</code></p>'; }
+  else {
+    var steps = [
+      'C = ft x Ccat' + (I.pair ? ' x 1.62' : '') + ' = ' + f2(I.ft) + ' x ' + f1(I.Ccat) + (I.pair ? ' x 1.62' : '') + ' = <em>' + f1(e.C) + ' kN</em>',
+      'C0 = ft x C0cat' + (I.pair ? ' x 2' : '') + ' = ' + f2(I.ft) + ' x ' + f1(I.C0cat) + (I.pair ? ' x 2' : '') + ' = <em>' + f1(e.C0) + ' kN</em>',
+      (r.type === 'dg' ? 'f0 = Fa/C0 = ' + f2(inp.fa) + ' / ' + f1(e.C0) + ' = ' + fmt(I.f0, 3) + ', so e = ' + f2(I.e) + '. ' : '') + I.cond,
+      I.eqP + ' = ' + I.eqPn.replace('P = ', '') + ' = <em>' + f2(e.P) + ' kN</em>',
+      'L10 = (C / P)^3 = (' + f1(e.C) + ' / ' + f2(e.P) + ')^3 = <em>' + fmt(e.L10, 0) + ' Mrev</em>',
+      'L10h = 10^6 x L10 / (60 n) = 10^6 x ' + fmt(e.L10, 0) + ' / (60 x ' + fmt(inp.n, 0) + ') = <em>' + fmt(e.L10h, 0) + ' h</em>',
+      'Lnm = a1 x aS x L10h = ' + f2(inp.a1) + ' x ' + f2(inp.aS) + ' x ' + fmt(e.L10h, 0) + ' = <em>' + fmt(e.Lnm, 0) + ' h</em>, required ' + fmt(inp.lh, 0) + ' h',
+      'Creq = P x (60 n Lreq / 10^6 / (a1 aS))^(1/3) = <em>' + f1(e.needC) + ' kN</em>, available ' + f1(e.C) + ' kN',
+      I.eqP0 + ' = ' + I.eqP0n.replace('P0 = ', '') + ' = <em>' + f2(e.P0) + ' kN</em>',
+      's0 = C0 / P0 = ' + f1(e.C0) + ' / ' + f2(e.P0) + ' = <em>' + f2(e.s0) + '</em>, required ' + f1(inp.s0req),
+      'dm = (d + D) / 2 = ' + f1(e.dm) + ' mm, dm x n = ' + f1(e.dm) + ' x ' + fmt(inp.n, 0) + ' = <em>' + fmt(e.dmn, 0) + '</em>, limit ' + fmt(e.lim, 0),
+      'Load multiple that still gives Lreq = <em>' + (mg == null ? '-' : isFinite(mg) ? f2(mg) + 'x' : '> 50x') + '</em> of your case'
+    ];
+    c.innerHTML = steps.map(function (s, i) { return '<p><span>' + ('0' + (i + 1)).slice(-2) + '</span><code>' + s + '</code></p>'; }).join('');
+  }
+  $('eqs').innerHTML =
+    eq('EQUIVALENT DYNAMIC LOAD', PEQ[r.type]) +
+    eq('BASIC RATING LIFE (ISO 281)', ['L10 = (C / P)^p, p = 3 for ball bearings', 'L10h = 10^6 L10 / (60 n)', '~L10 in million revolutions, n in rpm, C and P in kN.']) +
+    eq('ADJUSTED LIFE', ['Lnm = a1 x aS x L10h', '~a1 is the reliability factor. aS is a simplified cleanliness and lubrication factor.']) +
+    eq('STATIC SAFETY (ISO 76)', ['s0 = C0 / P0', '~P0 is the equivalent static load. Higher s0 means less risk of raceway dents.']) +
+    eq('SPEED INDEX', ['dm x n, with dm = (d + D) / 2', '~Compared with an approximate limit by type and variant.']);
+  $('facts').innerHTML = '<div class="tbl-wrap"><table><thead><tr><th>Factor</th><th>Symbol</th><th class="num">Value</th></tr></thead><tbody>' +
+    [['Life exponent, ball bearings', 'p', '3'], ['Reliability', 'a1', f2(inp.a1)], ['Cleanliness and lubrication', 'aS', f2(inp.aS)], ['Temperature on ratings', 'ft', f2(inp.ft)], ['Minimum static safety', 's0 min', f1(inp.s0req)],
+      ['Speed limit factor for variant', 'fv', f2(e.vf)], ['Pair factors, angular contact', 'C, C0', I.pair ? 'x1.62, x2' : 'single']].map(function (x) { return '<tr><td class="q">' + x[0] + '</td><td class="sym">' + x[1] + '</td><td class="num">' + x[2] + '</td></tr>'; }).join('') + '</tbody></table></div>';
+  $('notes').innerHTML = [
+    'REF ratings (series 60, 62, 63) follow catalogue values as closely as I could reproduce them. All other series are EST: scaled from a related series or computed from ball geometry. Verify them in the maker catalogue.',
+    'SKF and FAG share ISO boundary dimensions. Their ratings can differ a little between editions, so the maker switch changes designations only.',
+    'aS is a simplified factor. It is not the full SKF a_SKF, which needs viscosity ratio and contamination data.',
+    'The speed limit is an approximate dm x n value by type, not the catalogue limiting speed.',
+    'Loads are taken as constant and steady. No shock factor, misalignment or minimum load beyond P/C is applied.'
+  ].map(function (t) { return '<p class="fine" style="margin-bottom:10px">' + t + '</p>'; }).join('');
+});
+
+/* ---------- catalogue ---------- */
+$('k-type').innerHTML = '<option value="all">ALL FAMILIES</option>' + Y.TORDER.map(function (t) { return '<option value="' + t + '">' + Y.TYPES[t].name + '</option>'; }).join('');
+U.hooks.push(function (cur, inp) {
+  var ty = $('k-type').value, q = $('k-find').value.trim().toLowerCase();
+  var rows = state.rows.filter(function (r) { return (ty === 'all' || r.type === ty) && (!q || r.code.toLowerCase().indexOf(q) === 0); });
+  $('k-count').textContent = rows.length + ' ROWS';
+  var shown = rows.slice(0, lim.cat);
+  $('ktable').innerHTML = '<thead><tr><th>Designation</th><th>Family</th><th class="num">d</th><th class="num">D</th><th class="num">B</th><th class="num">C kN</th><th class="num">C0 kN</th><th>Data</th></tr></thead><tbody>' +
+    shown.map(function (r) { return '<tr><td class="nm" style="font-family:var(--f1);font-size:10px">' + esc(Y.shortName(r, state.maker, inp.variant)) + '</td><td class="q">' + Y.TYPES[r.type].name + '</td><td class="num">' + fmt(r.d, 0) + '</td><td class="num">' + fmt(r.D, 0) + '</td><td class="num">' + fmt(r.B, 0) + '</td><td class="num">' + fmt(r.C, 1) + '</td><td class="num">' + fmt(r.C0, 1) + '</td><td>' + datapill(r) + '</td></tr>'; }).join('') + '</tbody>';
+  $('k-more').hidden = rows.length <= lim.cat; $('k-more').textContent = 'MORE (' + (rows.length - lim.cat) + ')';
+});
+
+/* ---------- events ---------- */
+function pick(k) { state.sel = k; U.render(); }
+$('list').addEventListener('click', function (ev) { var tr = ev.target.closest('tr[data-k]'); if (tr) pick(tr.dataset.k); });
+$('list').addEventListener('dblclick', function (ev) { if (ev.target.closest('tr[data-k]')) U.showTab('bearing'); });
+$('list').addEventListener('keydown', function (ev) {
+  var tr = ev.target.closest('tr[data-k]'); if (!tr) return;
+  if (ev.key === 'Enter' || ev.key === ' ') { pick(tr.dataset.k); ev.preventDefault(); }
+});
+$('more').addEventListener('click', function () { lim.cand += 30; U.render(); });
+$('k-more').addEventListener('click', function () { lim.cat += 60; U.render(); });
+$('k-type').addEventListener('change', function () { lim.cat = 60; U.render(); });
+$('k-find').addEventListener('input', function () { lim.cat = 60; U.render(); });
+$('apply').addEventListener('click', function () {
+  var rows = Y.parseCSV($('csv').value);
+  if (!rows.length) { $('csv-msg').textContent = 'No valid rows.'; return; }
+  state.rows = state.rows.filter(function (r) { return r.ser !== 'custom'; }).concat(rows); state.sel = null; $('csv-msg').textContent = rows.length + ' rows added.'; U.drawTypes(); U.render();
+});
+$('reset').addEventListener('click', function () { state.rows = U.BASEROWS.slice(); state.sel = null; $('csv-msg').textContent = 'Table reset.'; U.drawTypes(); U.render(); });
+$('copy').addEventListener('click', function () {
+  var cur = U.current, e = cur.sel, inp = cur.inp; if (!e) return;
+  var txt = Y.desig(e.r, state.maker, inp.variant) + ' | ' + e.r.d + 'x' + e.r.D + 'x' + e.r.B + ' mm | C ' + fmt(e.C, 1) + ' kN, C0 ' + fmt(e.C0, 1) + ' kN | Fr ' + inp.fr + ' kN, Fa ' + inp.fa + ' kN, ' + inp.n + ' rpm | P ' + fmt(e.P, 2) + ' kN | Lnm ' + fmtH(e.Lnm) + ' (required ' + fmtH(inp.lh) + ') | s0 ' + fmt(e.s0, 2) + (e.r.est ? ' | rating estimated' : '');
+  var out = $('out'); out.value = txt;
+  function fallback() { out.hidden = false; out.focus(); out.select(); }
+  try { navigator.clipboard.writeText(txt).then(function () { $('copy').textContent = 'COPIED'; setTimeout(function () { $('copy').textContent = 'COPY SUMMARY'; }, 1400); }, fallback); } catch (er) { fallback(); }
+});
+$('csv').value = '# family, series, code, d, D, B, C, C0\ndg, 62, 6208, 40, 80, 18, 32.5, 19';
+
+U.render();
 })();
 </script>
 
-</body></html>
+</html>
